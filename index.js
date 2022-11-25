@@ -1,3 +1,9 @@
+// Mandar hora al iniciar página
+(function () {
+    document.getElementById('hora1').value = "06:00";
+    document.getElementById('hora2').value = "12:00";
+}());
+
 // Solo números en los input
 function solo_numeros(e) {
     let keys = e.key;
@@ -8,6 +14,38 @@ function solo_numeros(e) {
 // input de cupos
 let num = "";
 let cupos = document.getElementById('cupos');
+
+//input de intervalos
+let intv = "";
+let intervalos = document.getElementById('intervalos');
+
+//Cálculo de intervalos
+function calcular_intervalos() {
+    let morning_start = document.getElementById('hora1').value.split(':');
+    let morning_end = document.getElementById('hora2').value.split(':');
+
+    let h1 = new Date();
+    let h2 = new Date();
+    let ht = new Date();
+
+
+    h1.setHours(morning_start[0], morning_start[1]);
+    h2.setHours(morning_end[0], morning_end[1]);
+
+
+    ht.setHours(h2.getHours() - h1.getHours(), h2.getMinutes() - h1.getMinutes(), h2.getSeconds() - h1.getSeconds());
+    let minutes = ((h2.getHours() - h1.getHours()) * 60) + h2.getMinutes() - h1.getMinutes();
+
+    minutes /= num;
+    intervalos.value = minutes;
+
+
+    let resultado = document.getElementById('resultado');
+    resultado.innerHTML = "Total de horas: " + (ht.getHours() ? ht.getHours() + (ht.getHours() > 1 ? " horas" : "hora") : "") + "" + (ht.getMinutes() ? ht.getMinutes() + (ht.getMinutes() > 1 ? " Minutos" : " Minuto") : "");
+}
+
+
+// Admitir solo números y llamado de la funciona de cálculo de intervalos
 cupos.addEventListener('keypress', function (valor) {
     if (!solo_numeros(valor)) {
         valor.preventDefault();
@@ -15,44 +53,75 @@ cupos.addEventListener('keypress', function (valor) {
 
     if (valor.key >= 0 && valor.key <= 9) {
         num += valor.key;
-
-        let morning_start = document.getElementById('hora1').value.split(':');
-        let morning_end = document.getElementById('hora2').value.split(':');
-       
-        let h1 = new Date();
-        let h2 = new Date();
-        let ht = new Date();
-
-
-        h1.setHours(morning_start[0], morning_start[1]);
-        h2.setHours(morning_end[0], morning_end[1]);
-
-
-        ht.setHours(h2.getHours() - h1.getHours(), h2.getMinutes() - h1.getMinutes(), h2.getSeconds() - h1.getSeconds());
-        let minutes = ((h2.getHours() - h1.getHours()) * 60) + h2.getMinutes() - h1.getMinutes();
-        
-        minutes /= num;
-        document.getElementById('intervalos').value = minutes;
-
-
-        let resultado = document.getElementById('resultado');
-        resultado.innerHTML = "Total de horas: " + (ht.getHours() ? ht.getHours() + (ht.getHours() > 1 ? " horas" : "hora") : "") + "" + (ht.getMinutes() ? ht.getMinutes() + (ht.getMinutes() > 1 ? " Minutos" : " Minuto") : "");
-    }
-});
-
-cupos.addEventListener('keyup', function(event){
-    if(event.key == "Backspace"){
-        num = num.substring(0, num.length -1);
-        console.log(num);
+        calcular_intervalos();
     }
 });
 
 
-// input de intervalos
-let intervalos = document.getElementById('intervalos');
-intervalos.addEventListener('keypress', function(e){
-    if(!solo_numeros(e)){
+//Cálculo para cupos
+function calcular_cupos() {
+    let morning_start = document.getElementById('hora1').value.split(':');
+    let morning_end = document.getElementById('hora2').value.split(':');
+
+    let h1 = new Date();
+    let h2 = new Date();
+    let ht = new Date();
+
+
+    h1.setHours(morning_start[0], morning_start[1]);
+    h2.setHours(morning_end[0], morning_end[1]);
+
+
+    ht.setHours(h2.getHours() - h1.getHours(), h2.getMinutes() - h1.getMinutes(), h2.getSeconds() - h1.getSeconds());
+    let minutes = ((h2.getHours() - h1.getHours()) * 60) + h2.getMinutes() - h1.getMinutes();
+
+    minutes /= intv;
+    cupos.value = minutes;
+
+
+    let resultado = document.getElementById('resultado');
+    resultado.innerHTML = (ht.getHours() ? ht.getHours() + (ht.getHours() > 1 ? " horas" : "hora") : "") + "" + (ht.getMinutes() ? ht.getMinutes() + (ht.getMinutes() > 1 ? " Minutos" : " Minuto") : "");
+}
+
+// Admitir solo números y llamado de la función de Cálculo de Cupos
+intervalos.addEventListener('keypress', function (e) {
+
+    if (!solo_numeros(e)) {
         e.preventDefault();
+    }
+    if(e.key >= 0 && e.key <= 9){
+        intv += e.key;
+        calcular_cupos();
+    }
+});
+
+
+
+// Realizar Funciones al hacer DELETE
+cupos.addEventListener('keyup', function (event) {
+    if (event.key == "Backspace") {
+        num = num.substring(0, num.length - 1);
+        if (num != "") {
+            calcular_intervalos();
+        }
+        if(num == ""){
+            intervalos.value = "";
+        }
+    }
+});
+
+
+// DELETE en intarvalos 
+
+intervalos.addEventListener('keyup', function (event){
+    if(event.key == "Backspace"){
+        intv = intv.substring(0, intv.length -1);
+        if(intv != ""){
+            calcular_cupos();
+        }
+        if(intv == ""){
+            cupos.value = "";
+        }
     }
 });
 
