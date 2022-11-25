@@ -11,9 +11,20 @@ h2.setHours(morning_end[0],morning_end[1]);
 
 
 ht.setHours(h2.getHours()-h1.getHours(),h2.getMinutes()-h1.getMinutes(),h2.getSeconds()-h1.getSeconds());
-console.log(((h2.getHours()-h1.getHours())*60)+h2.getMinutes()-h1.getMinutes());
+let minutes = ((h2.getHours()-h1.getHours())*60)+h2.getMinutes()-h1.getMinutes();
+
 let resultado = document.getElementById('resultado');
 resultado.innerHTML = "Total de horas: " + (ht.getHours() ? ht.getHours() + (ht.getHours() > 1 ? " horas":"hora"): "") +"" +(ht.getMinutes() ? ht.getMinutes()+(ht.getMinutes() > 1 ? " Minutos":" Minuto"): "");
+
+
+let cupos = document.getElementById('cupos');
+cupos.addEventListener('keyup', function(valor){
+
+      minutes *=valor.key;
+      console.log(minutes);
+      document.getElementById('intervalos').value = minutes;
+
+})
 
 
 var hora1 = ("04:29:01").split(":"),
