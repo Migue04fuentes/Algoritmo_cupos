@@ -112,7 +112,6 @@ cupos.addEventListener('keyup', function (event) {
 
 
 // DELETE en intarvalos 
-
 intervalos.addEventListener('keyup', function (event){
     if(event.key == "Backspace"){
         intv = intv.substring(0, intv.length -1);
