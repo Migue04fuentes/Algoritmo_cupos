@@ -14,10 +14,12 @@ function solo_numeros(e) {
 // input de cupos
 let num = "";
 let cupos = document.getElementById('cupos');
+let cupos_valor = document.getElementById('cupos').value;
 
 //input de intervalos
 let intv = "";
 let intervalos = document.getElementById('intervalos');
+let interv_valor = document.getElementById('intervalos').valor;
 
 //Cálculo de intervalos
 function calcular_intervalos() {
@@ -34,14 +36,14 @@ function calcular_intervalos() {
 
 
     ht.setHours(h2.getHours() - h1.getHours(), h2.getMinutes() - h1.getMinutes(), h2.getSeconds() - h1.getSeconds());
-    let minutes = ((h2.getHours() - h1.getHours()) * 60) + h2.getMinutes() - h1.getMinutes();
-
+    let total_minutes = ((h2.getHours() - h1.getHours()) * 60) + h2.getMinutes() - h1.getMinutes();
+    let minutes = total_minutes;
     minutes /= num;
     intervalos.value = minutes;
 
 
     let resultado = document.getElementById('resultado');
-    resultado.innerHTML = "Total de horas: " + (ht.getHours() ? ht.getHours() + (ht.getHours() > 1 ? " horas" : "hora") : "") + "" + (ht.getMinutes() ? ht.getMinutes() + (ht.getMinutes() > 1 ? " Minutos" : " Minuto") : "");
+    resultado.innerHTML = "Total de horas: " + (ht.getHours() ? ht.getHours() + (ht.getHours() > 1 ? " horas" : "hora") : "") + "" + (ht.getMinutes() ? ht.getMinutes() + (ht.getMinutes() > 1 ? " Minutos" : " Minuto") : "")+"  Que es igual a= "+(total_minutes ? total_minutes +(total_minutes >1 ?"Minutos":"Minuto"):"");
 }
 
 
@@ -101,11 +103,16 @@ intervalos.addEventListener('keypress', function (e) {
 cupos.addEventListener('keyup', function (event) {
     if (event.key == "Backspace") {
         num = num.substring(0, num.length - 1);
+        cupos_valor = document.getElementById('cupos').value;
+        console.log(cupos_valor);
+        if(cupos_valor == ""){
+            intervalos.innerHTML = "";
+            intervalos.value = "";
+            num = "";
+            console.log('input vacio');
+        }
         if (num != "") {
             calcular_intervalos();
-        }
-        if(num == ""){
-            intervalos.value = "";
         }
     }
 });
@@ -115,11 +122,14 @@ cupos.addEventListener('keyup', function (event) {
 intervalos.addEventListener('keyup', function (event){
     if(event.key == "Backspace"){
         intv = intv.substring(0, intv.length -1);
+        interv_valor = document.getElementById('intervalos').value;
+        if(interv_valor == ""){
+            cupos.innerHTML = "";
+            cupos.value = "";
+            intv= "";
+        }
         if(intv != ""){
             calcular_cupos();
-        }
-        if(intv == ""){
-            cupos.value = "";
         }
     }
 });
