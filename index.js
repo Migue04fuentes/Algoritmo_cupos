@@ -183,8 +183,9 @@ intervalos.addEventListener('keyup', function (event) {
 
 // función de control z en el input intervalos 
 function KeyPressInt(e) {
-    var evtobj = window.event? event : e
-    if (evtobj.keyCode == 90 && evtobj.ctrlKey) {
+    // var evtobj = window.evt? evt : e
+    // console.log(evtobj);
+    if (e.keyCode == 90 && e.ctrlKey) {
         setTimeout(() => {
             intv = parseInt(document.getElementById('intervalos').value);
             if(Number.isNaN(intv) || intv == ""){
@@ -205,8 +206,8 @@ cupos.onkeydown = KeyPressCupo;
 
 // función de control z en el input cupos
 function KeyPressCupo(e){
-    var evtobj = window.event ? event : e
-    if (evtobj.keyCode == 90 && evtobj.ctrlKey){
+    // var evtobj = window.event ? event : e
+    if (e.keyCode == 90 && e.ctrlKey){
         setTimeout(()=>{
             num = parseInt(document.getElementById('cupos').value);
             if(Number.isNaN(num) || num == ""){
