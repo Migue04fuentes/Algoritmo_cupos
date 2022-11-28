@@ -36,18 +36,17 @@ function calcular_intervalos() {
 
 
     ht.setHours(h2.getHours() - h1.getHours(), h2.getMinutes() - h1.getMinutes(), h2.getSeconds() - h1.getSeconds());
-    let total_minutes = ((h2.getHours() - h1.getHours()) * 60) + h2.getMinutes() - h1.getMinutes();
-    let minutes = total_minutes;
+    let minutes = ((h2.getHours() - h1.getHours()) * 60) + h2.getMinutes() - h1.getMinutes();
 
     let totalint = minutes / num;
-    intv = totalint;
+    intv = totalint + "";
     intervalos.value = totalint;
 
 
     let resultado = document.getElementById('resultado');
-    resultado.innerHTML = "Total de horas: " + (ht.getHours() ? ht.getHours() + (ht.getHours() > 1 ? " horas" : "hora") : "") 
-                          + "" + (ht.getMinutes() ? ht.getMinutes() + (ht.getMinutes() > 1 ? " Minutos" : " Minuto") : "")
-                          +"  Que es igual a= "+(total_minutes ? total_minutes +(total_minutes >1 ?"Minutos":"Minuto"):"");
+    resultado.innerHTML = "Total de horas: " + (ht.getHours() ? ht.getHours() + (ht.getHours() > 1 ? " horas" : "hora") : "")
+        + "" + (ht.getMinutes() ? ht.getMinutes() + (ht.getMinutes() > 1 ? " Minutos" : " Minuto") : "")
+        + "  Que es igual a= " + (minutes ? minutes + (minutes > 1 ? "Minutos" : "Minuto") : "");
 }
 
 
@@ -58,9 +57,29 @@ cupos.addEventListener('keypress', function (valor) {
     }
 
     if (valor.key >= 0 && valor.key <= 9) {
-        num += valor.key;
-        calcular_intervalos();
+        setTimeout(() => {
+            num = document.getElementById('cupos').value;
+            calcular_intervalos();
+        }, 50);
     }
+});
+
+// Activar función al pegar en input cupos
+cupos.addEventListener('paste',function(){
+    setTimeout(()=>{
+        num = parseInt(document.getElementById('cupos').value);
+        if(Number.isNaN(num)){
+            intv = "";
+            num = '';
+            cupos.innerHTML= "";
+            cupos.value = "";
+            intervalos.innertHTML = "";
+            intervalos.value = "";
+        }else{
+            num += "";
+            calcular_intervalos();
+        }
+    },50);
 });
 
 
@@ -82,13 +101,13 @@ function calcular_cupos() {
     let minutes = ((h2.getHours() - h1.getHours()) * 60) + h2.getMinutes() - h1.getMinutes();
 
     let totalcup = minutes / intv;
-    num = totalcup;
+    num = totalcup + "";
     cupos.value = totalcup;
 
 
     let resultado = document.getElementById('resultado');
-    resultado.innerHTML = (ht.getHours() ? ht.getHours() + (ht.getHours() > 1 ? " horas" : "hora") : "") 
-                           + "" + (ht.getMinutes() ? ht.getMinutes() + (ht.getMinutes() > 1 ? " Minutos" : " Minuto") : "");
+    resultado.innerHTML = (ht.getHours() ? ht.getHours() + (ht.getHours() > 1 ? " horas" : "hora") : "")
+        + "" + (ht.getMinutes() ? ht.getMinutes() + (ht.getMinutes() > 1 ? " Minutos" : " Minuto") : "");
 }
 
 // Admitir solo números y llamado de la función de Cálculo de Cupos
@@ -97,12 +116,31 @@ intervalos.addEventListener('keypress', function (e) {
     if (!solo_numeros(e)) {
         e.preventDefault();
     }
-    if(e.key >= 0 && e.key <= 9){
-        intv += e.key;
-        calcular_cupos();
+    if (e.key >= 0 && e.key <= 9) {
+        // intv += e.key;
+        setTimeout(() => {
+            intv = document.getElementById('intervalos').value;
+            calcular_cupos();
+        }, 50);
     }
 });
 
+
+//Activar función al pegar
+intervalos.addEventListener('paste', function () {
+    setTimeout(() => {
+        intv = parseInt(document.getElementById('intervalos').value);
+        if(Number.isNaN(intv)){
+            intv = "";
+            num = '';
+            cupos.innerHTML= "";
+            intervalos.innertHTML = "";
+            intervalos.value = "";
+        }else{
+            calcular_cupos();
+        }
+    },50);
+});
 
 
 // Realizar Funciones al hacer DELETE
@@ -111,10 +149,11 @@ cupos.addEventListener('keyup', function (event) {
         num = num.substring(0, num.length - 1);
         cupos_valor = document.getElementById('cupos').value;
         num = cupos_valor;
-        if(cupos_valor == ""){
+        if (cupos_valor == "") {
             intervalos.innerHTML = "";
             intervalos.value = "";
             num = "";
+            intv = "";
         }
         if (num != "") {
             calcular_intervalos();
@@ -124,22 +163,67 @@ cupos.addEventListener('keyup', function (event) {
 
 
 // DELETE en intervalos 
-intervalos.addEventListener('keyup', function (event){
-    if(event.key == "Backspace"){
-        intv = intv.substring(0, intv.length -1);
+intervalos.addEventListener('keyup', function (event) {
+    if (event.key == "Backspace") {
+        intv = intv.substring(0, intv.length - 1);
         interv_valor = document.getElementById('intervalos').value;
         intv = interv_valor;
-        if(interv_valor == ""){
+        if (interv_valor == "") {
             cupos.innerHTML = "";
             cupos.value = "";
             intv = "";
+            num = "";
         }
-        if(intv != ""){
+        if (intv != "") {
             calcular_cupos();
         }
     }
 });
 
+
+// función de control z en el input intervalos 
+function KeyPressInt(e) {
+    var evtobj = window.event? event : e
+    if (evtobj.keyCode == 90 && evtobj.ctrlKey) {
+        setTimeout(() => {
+            intv = parseInt(document.getElementById('intervalos').value);
+            if(Number.isNaN(intv) || intv == ""){
+                intv = "";
+                num = '';
+                cupos.innerHTML= "";
+                cupos.value = "";
+                intervalos.innertHTML = "";
+                intervalos.value = "";
+            }else{
+                intv += "";
+                calcular_cupos();
+            }
+        },50);
+    };
+}
+cupos.onkeydown = KeyPressCupo;
+
+// función de control z en el input cupos
+function KeyPressCupo(e){
+    var evtobj = window.event ? event : e
+    if (evtobj.keyCode == 90 && evtobj.ctrlKey){
+        setTimeout(()=>{
+            num = parseInt(document.getElementById('cupos').value);
+            if(Number.isNaN(num) || num == ""){
+                intv = "";
+                num = '';
+                cupos.innerHTML= "";
+                cupos.value = "";
+                intervalos.innertHTML = "";
+                intervalos.value = "";
+            }else{
+                num += "";
+                calcular_intervalos();
+            }
+        },50);
+    }
+}
+intervalos.onkeydown = KeyPressInt;
 
 
 /* 
