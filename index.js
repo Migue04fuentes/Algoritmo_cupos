@@ -1,7 +1,11 @@
 // Mandar hora al iniciar página
 (function () {
+    // Horas matutinas
     document.getElementById('hora1').value = "06:00";
     document.getElementById('hora2').value = "12:00";
+    // Horas Jornada Vespertina
+    document.getElementById('horat1').value = "13:00";
+    document.getElementById('horat2').value = "17:00";
 }());
 
 // Solo números en los input
@@ -23,6 +27,9 @@ let interv_valor = document.getElementById('intervalos').valor;
 
 //Cálculo de intervalos
 function calcular_intervalos() {
+
+    let checktime = document.getElementById('switch_label');
+    console.log(checktime.checked);
     let morning_start = document.getElementById('hora1').value.split(':');
     let morning_end = document.getElementById('hora2').value.split(':');
 

@@ -1,16 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
     <title>Document</title>
 </head>
+
 <body>
-    <!-- hora inicio -->
-    <input type="time" id="hora1">
-    <!-- hora final -->
-    <input type="time" id="hora2">
+    <h4>Activar ambos turnos</h4>
+        <div class="switch-button">
+            <!-- Checkbox -->
+            <input type="checkbox" name="switch-button" id="switch_label" class="switch-button__checkbox">
+            <!-- Botón -->
+            <label for="switch_label" class="switch-button__label"></label>
+        </div>
+    </div>
+    <h4>Turno Matutino</h4>
+    <div>
+        <!-- hora inicio -->
+        <input type="time" id="hora1">
+        <!-- hora final -->
+        <input type="time" id="hora2">
+    </div>
+    <h4>Turno Vespertino</h4>
+    <div>
+        <!-- Hora Inicio -->
+        <input type="time" id="horat1">
+        <!-- Hora Final -->
+        <input type="time" id="horat2">
+    </div>
     <!-- resultado -->
     <p id="resultado"></p>
     <!-- cupos -->
@@ -21,5 +42,6 @@
     <input type="text" id="intervalos" placeholder="Intervalos">
     <script src="index.js"></script>
 </body>
+
 </html>
 <!-- https://ottsincelejo.com/blogwilson/bdavanzada/procedimientos.pdf -->
