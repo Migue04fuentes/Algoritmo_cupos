@@ -14,8 +14,10 @@ let cupos_valor = document.getElementById('cupos').value;
 //input de intervalos
 let intv = "";
 let intervalos = document.getElementById('intervalos');
-let interv_valor = document.getElementById('intervalos').valor;
+let interv_valor = document.getElementById('intervalos').value;
 
+// Etiqueta de fulltime
+let fulltime = document.getElementById('fulltime');
 
 // Mandar hora al iniciar página
 (function () {
@@ -38,40 +40,37 @@ function solo_numeros(e) {
     return keys >= 0 && keys <= 9;
 }
 
+// Disabled & Enabled inputs 
+function activacion_turnos(input1, input2) {
+    if (turno_mat.checked) {
+        document.getElementById(input1).disabled = false;
+        document.getElementById(input2).disabled = false;
+    } else {
+        document.getElementById(input1).disabled = true;
+        document.getElementById(input2).disabled = true;
+    }
+    if (turno_mat.checked == false && turno_vesp.checked == false) {
+        cupos.disabled = true;
+        intervalos.disabled = true;
+    } else {
+        cupos.disabled = false;
+        intervalos.disabled = false;
+    }
+}
+
 // Activación de turnos
 turno_mat.addEventListener('click', () => {
-    if (turno_mat.checked) {
-        document.getElementById('hora1').disabled = false;
-        document.getElementById('hora2').disabled = false;
-    } else {
-        // console.log(turno_mat.checked);
-        document.getElementById('hora1').disabled = true;
-        document.getElementById('hora2').disabled = true;
-    }
-    /*  if(turno_mat.checked && turno_vesp.checked){
-         cupos.disabled = false;
-         intervalos.disabled = false;
-     }else{
-         cupos.disabled = true;
-         intervalos.disabled = true;
-     } */
+    // id de input time morning
+    let turno = 'hora1';
+    let turno2 = 'hora2';
+    activacion_turnos(turno, turno2);
 });
 
 turno_vesp.addEventListener('click', () => {
-    if (turno_vesp.checked) {
-        document.getElementById('horat1').disabled = false;
-        document.getElementById('horat2').disabled = false;
-    } else {
-        document.getElementById('horat1').disabled = true;
-        document.getElementById('horat2').disabled = true;
-    }
-    /*   if(turno_mat.checked && turno_vesp.checked){
-          cupos.disabled = false;
-          intervalos.disabled = false;
-      }else{
-          cupos.disabled = true;
-          intervalos.disabled = true;
-      } */
+    // id de input time afternoon
+    let turno = 'horat1';
+    let turno2 = 'horat2';
+    activacion_turnos(turno, turno2);
 });
 
 
@@ -104,8 +103,30 @@ function calcular_intervalos(hora1, hora2) {
     resultado.innerHTML = "Total de horas: " + (ht.getHours() ? ht.getHours() + (ht.getHours() > 1 ? " horas" : "hora") : "")
         + "" + (ht.getMinutes() ? ht.getMinutes() + (ht.getMinutes() > 1 ? " Minutos" : " Minuto") : "")
         + "  Que es igual a= " + (minutes ? minutes + (minutes > 1 ? "Minutos" : "Minuto") : "");
+}
 
-    return totalint;
+function calcular_fulltime_intervalos(hr1, hr2, hr3, hr4) {
+    let horai = hr1.split(":");
+    let horaf = hr2.split(":");
+    let horati = hr3.split(":");
+    let horatf = hr4.split(":");
+
+    let h1 = new Date();
+    let h2 = new Date();
+    let h3 = new Date();
+    let h4 = new Date();
+    let ht = new Date();
+
+    h1.setHours(horai[0], horai[1]);
+    h2.setHours(horaf[0], horaf[1]);
+    h3.setHours(horati[0], horati[1]);
+    h4.setHours(horatf[0], horatf[1]);
+
+    ht.setHours(h2.getHours() - h1.getHours(), h2.getMinutes() - h1.getMinutes());
+    let minutes = (((h2.getHours() - h1.getHours()) + (h4.getHours() - h3.getHours())) * 60) + ((h2.getMinutes() - h1.getMinutes()) + (h4.getMinutes() - h3.getMinutes()));
+    let total_int = minutes / num;
+    intv = total_int + "";
+    intervalos.value = total_int;
 }
 
 
@@ -117,11 +138,14 @@ cupos.addEventListener('keypress', function (valor) {
     }
     if (turno_mat.checked && turno_vesp.checked) {
         if (valor.key >= 0 && valor.key <= 9) {
-            let morning_start = document.getElementById('hora1').value;
-            let morning_end = document.getElementById('hora2').value;
-            let afternoon_start = document.getElementById('horat1').value;
-            let afternoon_end = document.getElementById('horat2').value;
-            intervalos.value = parseInt(calcular_intervalos(morning_start, morning_end)+ calcular_intervalos(afternoon_start, afternoon_end));
+            setTimeout(() => {
+                num = document.getElementById('cupos').value;
+                let morning_start = document.getElementById('hora1').value;
+                let morning_end = document.getElementById('hora2').value;
+                let afternoon_start = document.getElementById('horat1').value;
+                let afternoon_end = document.getElementById('horat2').value;
+                calcular_fulltime_intervalos(morning_start, morning_end, afternoon_start, afternoon_end);
+            }, 50);
         }
     }
     if (turno_mat && turno_vesp.checked == false) {
@@ -158,8 +182,13 @@ cupos.addEventListener('paste', function () {
             intervalos.innertHTML = "";
             intervalos.value = "";
         } else {
-            if (turno_mat && turno_vesp) {
-                console.log('Doble turno activado');
+            if (turno_mat.checked && turno_vesp.checked) {
+                num += "";
+                let morning_start = document.getElementById('hora1').value;
+                let morning_end = document.getElementById('hora2').value;
+                let afternoon_start = document.getElementById('horat1').value;
+                let afternoon_end = document.getElementById('horat2').value;
+                calcular_fulltime_intervalos(morning_start, morning_end, afternoon_start, afternoon_end);
             }
             if (turno_mat && turno_vesp.checked == false) {
                 num += "";
@@ -190,8 +219,12 @@ cupos.addEventListener('keyup', function (event) {
             num = "";
             intv = "";
         }
-        if (num != "" && turno_mat && turno_vesp) {
-            console.log('Doble turno activado');
+        if (num != "" && turno_mat.checked && turno_vesp.checked) {
+            let morning_start = document.getElementById('hora1').value;
+            let morning_end = document.getElementById('hora2').value;
+            let afternoon_start = document.getElementById('horat1').value;
+            let afternoon_end = document.getElementById('horat2').value;
+            calcular_fulltime_intervalos(morning_start, morning_end, afternoon_start, afternoon_end);
         }
         if (num != "" && turno_mat && turno_vesp.checked == false) {
             let morning_start = document.getElementById('hora1').value;
@@ -220,8 +253,13 @@ function KeyPressCupo(e) {
                 intervalos.innertHTML = "";
                 intervalos.value = "";
             } else {
-                if (turno_mat && turno_vesp) {
-                    console.log('Doble turno activado');
+                if (turno_mat.checked && turno_vesp.checked) {
+                    num += "";
+                    let morning_start = document.getElementById('hora1').value;
+                    let morning_end = document.getElementById('hora2').value;
+                    let afternoon_start = document.getElementById('horat1').value;
+                    let afternoon_end = document.getElementById('horat2').value;
+                    calcular_fulltime_intervalos(morning_start, morning_end, afternoon_start, afternoon_end);
                 }
                 if (turno_mat && turno_vesp.checked == false) {
                     num += "";
