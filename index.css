@@ -4,6 +4,8 @@
     --color-button: #fdffff;
     --color-black: #000;
 }
+
+/* SWITCHES */
 .switch-button {
     display: inline;
 }

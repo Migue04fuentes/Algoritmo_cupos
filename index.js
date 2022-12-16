@@ -1,7 +1,7 @@
 // Variables
 let turno_mat = document.getElementById('switch_label');
 let turno_vesp = document.getElementById('switch_turno_vesp');
-// Mandar hora al iniciar página
+// Mandar hora al iniciar página 
 (function () {
     // Horas matutinas
     document.getElementById('hora1').value = "06:00";
