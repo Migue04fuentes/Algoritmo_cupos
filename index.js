@@ -1,7 +1,23 @@
-// Variables
+// VARIBLES
 let turno_mat = document.getElementById('switch_label');
 let turno_vesp = document.getElementById('switch_turno_vesp');
-// Mandar hora al iniciar página 
+
+// HORAS TURNO MAÑANA
+let morning_start = document.getElementById('hora1').value;
+let morning_end = document.getElementById('hora2').value;
+
+// input de cupos
+let num = "";
+let cupos = document.getElementById('cupos');
+let cupos_valor = document.getElementById('cupos').value;
+
+//input de intervalos
+let intv = "";
+let intervalos = document.getElementById('intervalos');
+let interv_valor = document.getElementById('intervalos').valor;
+
+
+// Mandar hora al iniciar página
 (function () {
     // Horas matutinas
     document.getElementById('hora1').value = "06:00";
@@ -13,6 +29,7 @@ let turno_vesp = document.getElementById('switch_turno_vesp');
     // Activación de turnos
     turno_mat.checked = true;
     turno_vesp.checked = true;
+
 }());
 
 // Solo números en los input
@@ -31,6 +48,13 @@ turno_mat.addEventListener('click', () => {
         document.getElementById('hora1').disabled = true;
         document.getElementById('hora2').disabled = true;
     }
+    /*  if(turno_mat.checked && turno_vesp.checked){
+         cupos.disabled = false;
+         intervalos.disabled = false;
+     }else{
+         cupos.disabled = true;
+         intervalos.disabled = true;
+     } */
 });
 
 turno_vesp.addEventListener('click', () => {
@@ -41,34 +65,31 @@ turno_vesp.addEventListener('click', () => {
         document.getElementById('horat1').disabled = true;
         document.getElementById('horat2').disabled = true;
     }
+    /*   if(turno_mat.checked && turno_vesp.checked){
+          cupos.disabled = false;
+          intervalos.disabled = false;
+      }else{
+          cupos.disabled = true;
+          intervalos.disabled = true;
+      } */
 });
 
 
-// input de cupos
-let num = "";
-let cupos = document.getElementById('cupos');
-let cupos_valor = document.getElementById('cupos').value;
-
-//input de intervalos
-let intv = "";
-let intervalos = document.getElementById('intervalos');
-let interv_valor = document.getElementById('intervalos').valor;
 
 //Cálculo de intervalos
-function calcular_intervalos() {
+function calcular_intervalos(hora1, hora2) {
 
-    let checktime = document.getElementById('switch_label');
-    console.log(checktime.checked);
-    let morning_start = document.getElementById('hora1').value.split(':');
-    let morning_end = document.getElementById('hora2').value.split(':');
+
+    let horai = hora1.split(':');
+    let horaf = hora2.split(':');
 
     let h1 = new Date();
     let h2 = new Date();
     let ht = new Date();
 
 
-    h1.setHours(morning_start[0], morning_start[1]);
-    h2.setHours(morning_end[0], morning_end[1]);
+    h1.setHours(horai[0], horai[1]);
+    h2.setHours(horaf[0], horaf[1]);
 
 
     ht.setHours(h2.getHours() - h1.getHours(), h2.getMinutes() - h1.getMinutes(), h2.getSeconds() - h1.getSeconds());
@@ -83,20 +104,45 @@ function calcular_intervalos() {
     resultado.innerHTML = "Total de horas: " + (ht.getHours() ? ht.getHours() + (ht.getHours() > 1 ? " horas" : "hora") : "")
         + "" + (ht.getMinutes() ? ht.getMinutes() + (ht.getMinutes() > 1 ? " Minutos" : " Minuto") : "")
         + "  Que es igual a= " + (minutes ? minutes + (minutes > 1 ? "Minutos" : "Minuto") : "");
+
+    return totalint;
 }
 
 
 // Admitir solo números y llamado de la funciona de cálculo de intervalos
 cupos.addEventListener('keypress', function (valor) {
+
     if (!solo_numeros(valor)) {
         valor.preventDefault();
     }
-
-    if (valor.key >= 0 && valor.key <= 9) {
-        setTimeout(() => {
-            num = document.getElementById('cupos').value;
-            calcular_intervalos();
-        }, 50);
+    if (turno_mat.checked && turno_vesp.checked) {
+        if (valor.key >= 0 && valor.key <= 9) {
+            let morning_start = document.getElementById('hora1').value;
+            let morning_end = document.getElementById('hora2').value;
+            let afternoon_start = document.getElementById('horat1').value;
+            let afternoon_end = document.getElementById('horat2').value;
+            intervalos.value = parseInt(calcular_intervalos(morning_start, morning_end)+ calcular_intervalos(afternoon_start, afternoon_end));
+        }
+    }
+    if (turno_mat && turno_vesp.checked == false) {
+        if (valor.key >= 0 && valor.key <= 9) {
+            setTimeout(() => {
+                num = document.getElementById('cupos').value;
+                let morning_start = document.getElementById('hora1').value;
+                let morning_end = document.getElementById('hora2').value;
+                calcular_intervalos(morning_start, morning_end);
+            }, 50);
+        }
+    }
+    if (turno_vesp && turno_mat.checked == false) {
+        if (valor.key >= 0 && valor.key <= 9) {
+            setTimeout(() => {
+                num = document.getElementById('cupos').value;
+                let afternoon_start = document.getElementById('horat1').value;
+                let afternoon_end = document.getElementById('horat2').value;
+                calcular_intervalos(afternoon_start, afternoon_end);
+            }, 50);
+        }
     }
 });
 
@@ -112,25 +158,102 @@ cupos.addEventListener('paste', function () {
             intervalos.innertHTML = "";
             intervalos.value = "";
         } else {
-            num += "";
-            calcular_intervalos();
+            if (turno_mat && turno_vesp) {
+                console.log('Doble turno activado');
+            }
+            if (turno_mat && turno_vesp.checked == false) {
+                num += "";
+                let morning_start = document.getElementById('hora1').value;
+                let morning_end = document.getElementById('hora2').value;
+                calcular_intervalos(morning_start, morning_end);
+            }
+            if (turno_vesp && turno_mat.checked == false) {
+                num += "";
+                let afternoon_start = document.getElementById('horat1').value;
+                let afternoon_end = document.getElementById('horat2').value;
+                calcular_intervalos(afternoon_start, afternoon_end);
+            }
         }
     }, 50);
 });
 
 
-//Cálculo para cupos
-function calcular_cupos() {
-    let morning_start = document.getElementById('hora1').value.split(':');
-    let morning_end = document.getElementById('hora2').value.split(':');
+// Realizar Funciones al hacer DELETE
+cupos.addEventListener('keyup', function (event) {
+    if (event.key == "Backspace") {
+        num = num.substring(0, num.length - 1);
+        cupos_valor = document.getElementById('cupos').value;
+        num = cupos_valor;
+        if (cupos_valor == "") {
+            intervalos.innerHTML = "";
+            intervalos.value = "";
+            num = "";
+            intv = "";
+        }
+        if (num != "" && turno_mat && turno_vesp) {
+            console.log('Doble turno activado');
+        }
+        if (num != "" && turno_mat && turno_vesp.checked == false) {
+            let morning_start = document.getElementById('hora1').value;
+            let morning_end = document.getElementById('hora2').value;
+            calcular_intervalos(morning_start, morning_end);
+        }
+        if (num != "" && turno_vesp && turno_mat.checked == false) {
+            let morning_start = document.getElementById('horat1').value;
+            let morning_end = document.getElementById('horat2').value;
+            calcular_intervalos(morning_start, morning_end);
+        }
+    }
+});
+
+// función de control z en el input cupos
+function KeyPressCupo(e) {
+    // var evtobj = window.event ? event : e
+    if (e.keyCode == 90 && e.ctrlKey) {
+        setTimeout(() => {
+            num = parseInt(document.getElementById('cupos').value);
+            if (Number.isNaN(num) || num == "") {
+                intv = "";
+                num = '';
+                cupos.innerHTML = "";
+                cupos.value = "";
+                intervalos.innertHTML = "";
+                intervalos.value = "";
+            } else {
+                if (turno_mat && turno_vesp) {
+                    console.log('Doble turno activado');
+                }
+                if (turno_mat && turno_vesp.checked == false) {
+                    num += "";
+                    let morning_start = document.getElementById('hora1').value;
+                    let morning_end = document.getElementById('hora2').value;
+                    calcular_intervalos(morning_start, morning_end);
+                }
+                if (turno_vesp && turno_mat.checked == false) {
+                    num += "";
+                    let morning_start = document.getElementById('horat1').value;
+                    let morning_end = document.getElementById('horat2').value;
+                    calcular_intervalos(morning_start, morning_end);
+                }
+            }
+        }, 50);
+    }
+}
+intervalos.onkeydown = KeyPressInt;
+
+
+//CALCULAR CUPOS
+function calcular_cupos(hora1, hora2) {
+    let horai = hora1.split(':');
+    let horaf = hora2.split(':');
 
     let h1 = new Date();
     let h2 = new Date();
     let ht = new Date();
 
 
-    h1.setHours(morning_start[0], morning_start[1]);
-    h2.setHours(morning_end[0], morning_end[1]);
+    h1.setHours(horai[0], horai[1]);
+    h2.setHours(horaf[0], horaf[1]);
 
 
     ht.setHours(h2.getHours() - h1.getHours(), h2.getMinutes() - h1.getMinutes(), h2.getSeconds() - h1.getSeconds());
@@ -152,12 +275,28 @@ intervalos.addEventListener('keypress', function (e) {
     if (!solo_numeros(e)) {
         e.preventDefault();
     }
-    if (e.key >= 0 && e.key <= 9) {
-        // intv += e.key;
-        setTimeout(() => {
-            intv = document.getElementById('intervalos').value;
-            calcular_cupos();
-        }, 50);
+    if (turno_mat && turno_vesp) {
+        console.log('Doble turno activado');
+    }
+    if (turno_mat && turno_vesp.checked == false) {
+        if (e.key >= 0 && e.key <= 9) {
+            setTimeout(() => {
+                intv = document.getElementById('intervalos').value;
+                let morning_start = document.getElementById('hora1').value;
+                let morning_end = document.getElementById('hora2').value;
+                calcular_cupos(morning_start, morning_end);
+            }, 50);
+        }
+    }
+    if (turno_vesp && turno_mat.checked == false) {
+        if (e.key >= 0 && e.key <= 9) {
+            setTimeout(() => {
+                intv = document.getElementById('intervalos').value;
+                let afternoon_start = document.getElementById('horat1').value;
+                let afternoon_end = document.getElementById('horat2').value;
+                calcular_cupos(afternoon_start, afternoon_end);
+            }, 50);
+        }
     }
 });
 
@@ -173,29 +312,25 @@ intervalos.addEventListener('paste', function () {
             intervalos.innertHTML = "";
             intervalos.value = "";
         } else {
-            calcular_cupos();
+            if (turno_mat && turno_vesp) {
+                console.log('Doble turno activado');
+            }
+            if (turno_mat && turno_vesp.checked == false) {
+                intv += "";
+                let morning_start = document.getElementById('hora1').value;
+                let morning_end = document.getElementById('hora2').value;
+                calcular_cupos(morning_start, morning_end);
+            }
+            if (turno_vesp && turno_mat.checked == false) {
+                intv += "";
+                let afternoon_start = document.getElementById('horat1').value;
+                let afternoon_end = document.getElementById('horat2').value;
+                calcular_cupos(afternoon_start, afternoon_end);
+            }
         }
     }, 50);
 });
 
-
-// Realizar Funciones al hacer DELETE
-cupos.addEventListener('keyup', function (event) {
-    if (event.key == "Backspace") {
-        num = num.substring(0, num.length - 1);
-        cupos_valor = document.getElementById('cupos').value;
-        num = cupos_valor;
-        if (cupos_valor == "") {
-            intervalos.innerHTML = "";
-            intervalos.value = "";
-            num = "";
-            intv = "";
-        }
-        if (num != "") {
-            calcular_intervalos();
-        }
-    }
-});
 
 
 // DELETE en intervalos 
@@ -210,8 +345,18 @@ intervalos.addEventListener('keyup', function (event) {
             intv = "";
             num = "";
         }
-        if (intv != "") {
-            calcular_cupos();
+        if (intv != "" && turno_mat && turno_vesp) {
+            console.log('Doble turno activado');
+        }
+        if (intv != "" && turno_mat && turno_vesp.checked == false) {
+            let morning_start = document.getElementById('hora1').value;
+            let morning_end = document.getElementById('hora2').value;
+            calcular_cupos(morning_start, morning_end);
+        }
+        if (intv != "" && turno_vesp && turno_mat.checked == false) {
+            let afternoon_start = document.getElementById('horat1').value;
+            let afternoon_end = document.getElementById('horat2').value;
+            calcular_cupos(afternoon_start, afternoon_end);
         }
     }
 });
@@ -232,36 +377,26 @@ function KeyPressInt(e) {
                 intervalos.innertHTML = "";
                 intervalos.value = "";
             } else {
-                intv += "";
-                calcular_cupos();
+                if (turno_mat && turno_vesp) {
+                    console.log('Doble turno activado');
+                }
+                if (turno_mat && turno_vesp.checked == false) {
+                    intv += "";
+                    let morning_start = document.getElementById('hora1').value;
+                    let morning_end = document.getElementById('hora2').value;
+                    calcular_cupos(morning_start, morning_end);
+                }
+                if (turno_vesp && turno_mat.checked == false) {
+                    intv += "";
+                    let afternoon_start = document.getElementById('horat1').value;
+                    let afternoon_end = document.getElementById('horat2').value;
+                    calcular_cupos(afternoon_start, afternoon_end);
+                }
             }
         }, 50);
     };
 }
 cupos.onkeydown = KeyPressCupo;
-
-// función de control z en el input cupos
-function KeyPressCupo(e) {
-    // var evtobj = window.event ? event : e
-    if (e.keyCode == 90 && e.ctrlKey) {
-        setTimeout(() => {
-            num = parseInt(document.getElementById('cupos').value);
-            if (Number.isNaN(num) || num == "") {
-                intv = "";
-                num = '';
-                cupos.innerHTML = "";
-                cupos.value = "";
-                intervalos.innertHTML = "";
-                intervalos.value = "";
-            } else {
-                num += "";
-                calcular_intervalos();
-            }
-        }, 50);
-    }
-}
-intervalos.onkeydown = KeyPressInt;
-
 
 /* 
 
