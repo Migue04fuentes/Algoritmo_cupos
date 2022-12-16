@@ -1,6 +1,3 @@
-// Variables
-let turno_mat = document.getElementById('switch_label');
-let turno_vesp = document.getElementById('switch_turno_vesp');
 // Mandar hora al iniciar página
 (function () {
     // Horas matutinas
@@ -9,10 +6,6 @@ let turno_vesp = document.getElementById('switch_turno_vesp');
     // Horas Jornada Vespertina
     document.getElementById('horat1').value = "13:00";
     document.getElementById('horat2').value = "17:00";
-
-    // Activación de turnos
-    turno_mat.checked = true;
-    turno_vesp.checked = true;
 }());
 
 // Solo números en los input
@@ -20,28 +13,6 @@ function solo_numeros(e) {
     let keys = e.key;
     return keys >= 0 && keys <= 9;
 }
-
-// Activación de turnos
-turno_mat.addEventListener('click', () => {
-    if (turno_mat.checked) {
-        document.getElementById('hora1').disabled = false;
-        document.getElementById('hora2').disabled = false;
-    } else {
-        // console.log(turno_mat.checked);
-        document.getElementById('hora1').disabled = true;
-        document.getElementById('hora2').disabled = true;
-    }
-});
-
-turno_vesp.addEventListener('click', () => {
-    if (turno_vesp.checked) {
-        document.getElementById('horat1').disabled = false;
-        document.getElementById('horat2').disabled = false;
-    } else {
-        document.getElementById('horat1').disabled = true;
-        document.getElementById('horat2').disabled = true;
-    }
-});
 
 
 // input de cupos
@@ -101,21 +72,21 @@ cupos.addEventListener('keypress', function (valor) {
 });
 
 // Activar función al pegar en input cupos
-cupos.addEventListener('paste', function () {
-    setTimeout(() => {
+cupos.addEventListener('paste',function(){
+    setTimeout(()=>{
         num = parseInt(document.getElementById('cupos').value);
-        if (Number.isNaN(num)) {
+        if(Number.isNaN(num)){
             intv = "";
             num = '';
-            cupos.innerHTML = "";
+            cupos.innerHTML= "";
             cupos.value = "";
             intervalos.innertHTML = "";
             intervalos.value = "";
-        } else {
+        }else{
             num += "";
             calcular_intervalos();
         }
-    }, 50);
+    },50);
 });
 
 
@@ -166,16 +137,16 @@ intervalos.addEventListener('keypress', function (e) {
 intervalos.addEventListener('paste', function () {
     setTimeout(() => {
         intv = parseInt(document.getElementById('intervalos').value);
-        if (Number.isNaN(intv)) {
+        if(Number.isNaN(intv)){
             intv = "";
             num = '';
-            cupos.innerHTML = "";
+            cupos.innerHTML= "";
             intervalos.innertHTML = "";
             intervalos.value = "";
-        } else {
+        }else{
             calcular_cupos();
         }
-    }, 50);
+    },50);
 });
 
 
@@ -224,40 +195,40 @@ function KeyPressInt(e) {
     if (e.keyCode == 90 && e.ctrlKey) {
         setTimeout(() => {
             intv = parseInt(document.getElementById('intervalos').value);
-            if (Number.isNaN(intv) || intv == "") {
+            if(Number.isNaN(intv) || intv == ""){
                 intv = "";
                 num = '';
-                cupos.innerHTML = "";
+                cupos.innerHTML= "";
                 cupos.value = "";
                 intervalos.innertHTML = "";
                 intervalos.value = "";
-            } else {
+            }else{
                 intv += "";
                 calcular_cupos();
             }
-        }, 50);
+        },50);
     };
 }
 cupos.onkeydown = KeyPressCupo;
 
 // función de control z en el input cupos
-function KeyPressCupo(e) {
+function KeyPressCupo(e){
     // var evtobj = window.event ? event : e
-    if (e.keyCode == 90 && e.ctrlKey) {
-        setTimeout(() => {
+    if (e.keyCode == 90 && e.ctrlKey){
+        setTimeout(()=>{
             num = parseInt(document.getElementById('cupos').value);
-            if (Number.isNaN(num) || num == "") {
+            if(Number.isNaN(num) || num == ""){
                 intv = "";
                 num = '';
-                cupos.innerHTML = "";
+                cupos.innerHTML= "";
                 cupos.value = "";
                 intervalos.innertHTML = "";
                 intervalos.value = "";
-            } else {
+            }else{
                 num += "";
                 calcular_intervalos();
             }
-        }, 50);
+        },50);
     }
 }
 intervalos.onkeydown = KeyPressInt;
