@@ -291,6 +291,27 @@ function KeyPressCupo(e) {
             }
         }, 50);
     }
+    if (e.keyCode == 13) {
+        cupos_valor = document.getElementById('cupos').value;
+        if (cupos_valor != "" && turno_mat.checked == false) {
+            num = document.getElementById('cupos').value;
+            let afternoon_start = document.getElementById('horat1').value;
+            let afternoon_end = document.getElementById('horat2').value;
+            calcular_intervalos(afternoon_start, afternoon_end);
+        }else if (cupos_valor != "" && turno_vesp.checked == false) {
+            num = document.getElementById('cupos').value;
+            let morning_start = document.getElementById('hora1').value;
+            let morning_end = document.getElementById('hora2').value;
+            calcular_intervalos(morning_start, morning_end);
+        }else if (cupos_valor != "" && turno_mat.checked && turno_vesp.checked) {
+            num = document.getElementById('cupos').value;
+            let morning_start = document.getElementById('hora1').value;
+            let morning_end = document.getElementById('hora2').value;
+            let afternoon_start = document.getElementById('horat1').value;
+            let afternoon_end = document.getElementById('horat2').value;
+            calcular_fulltime_intervalos(morning_start, morning_end, afternoon_start, afternoon_end);
+        }
+    }
 }
 intervalos.onkeydown = KeyPressInt;
 
@@ -364,7 +385,7 @@ intervalos.addEventListener('keypress', function (e) {
                 let afternoon_start = document.getElementById('horat1').value;
                 let afternoon_end = document.getElementById('horat2').value;
                 calcular_fulltime_cupos(morning_start, morning_end, afternoon_start, afternoon_end);
-            },50);
+            }, 50);
         }
     }
     if (turno_mat && turno_vesp.checked == false) {
