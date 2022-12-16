@@ -1,6 +1,6 @@
 :root {
-    --color-green: #0073a8;
-    --color-red: #f63f1f;
+    --color-green: #73c0e4;
+    --color-red: #dadada;
     --color-button: #fdffff;
     --color-black: #000;
 }
@@ -27,7 +27,7 @@
     background-color: var(--color-button);
     content: '';
     border-radius: 50%;
-    box-shadow: inset 0px 0px 0px 1px var(--color-black);
+    box-shadow: inset 0px 0px 0px 0.5px var(--color-black);
 }
 .switch-button .switch-button__checkbox:checked + .switch-button__label {
     background-color: var(--color-green);
