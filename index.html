@@ -46,14 +46,46 @@
     <input type="text" id="intervalos" placeholder="Intervalos">
     <!-- Botón Calcular Hora Final -->
     <div>
-        <input type="submit" value="Hora final" id="btn_hora_final">
+        <!-- <input type="submit" value="Hora final" id=""> -->
+        <a href="#modal3">Calcular hora final</a>
     </div>
     <!-- Total de Joranda Completa -->
     <div>
         <span id="fulltime"></span>
     </div>
+
+    <!-- Modal Calculo de hora final -->
+    <div id="modal3" class="modalmask">
+        <div class="modalbox resize">
+            <a href="#close" title="Close" class="close">&times;</a>
+            <h2>Cálcular hora final</h2>
+            <div>
+                <div>
+                    <label for="horainicio">Hora Inicio</label>
+                    <input type="time" id="horainicio">
+                </div><br>
+                <div>
+                    <label for="horafinal">Hora final:</label>
+                    <input type="time" id="horafinal" disabled>
+                </div>
+            </div><br>
+            <div>
+                <label for="cuposhf">Cupos:</label>
+                <input type="text" id="cuposhf">
+            </div><br>
+            <div>
+                <label for="intervaloshf">Intervalos:</label>
+                <input type="text" id="intervaloshf" maxlength="2">
+            </div><br>
+            <div>
+                <input type="submit" Value="Aceptar" id="btn_hora_final">
+            </div>
+        </div>
+    </div>
+    <!-- Archivo js-->
     <script src="index.js"></script>
 </body>
+
 </html>
 <!-- 1: Cálculo de hora final
-     2: Aplicación de control
+     2: Aplicación de control+y -->

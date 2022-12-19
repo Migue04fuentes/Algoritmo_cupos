@@ -34,6 +34,9 @@ let fulltime = document.getElementById("fulltime");
   document.getElementById("horat1").value = "13:00";
   document.getElementById("horat2").value = "17:00";
 
+  // Hora Inicial para el cálculo de la hora final
+  document.getElementById('horainicio').value = "06:00"
+
   // Activación de turnos
   turno_mat.checked = true;
   turno_vesp.checked = true;
@@ -158,11 +161,9 @@ function calcular_fulltime_intervalos(hr1, hr2, hr3, hr4) {
   intervalos.value = total_int;
 }
 
-// Admitir solo números y llamado de la funciona de cálculo de intervalos
-cupos.addEventListener("keypress", function (valor) {
-  if (!solo_numeros(valor)) {
-    valor.preventDefault();
-  }
+// Función calculos por jornada
+function calcular_intervalos_jornada(valor) {
+
   if (turno_mat.checked && turno_vesp.checked) {
     if (valor.key >= 0 && valor.key <= 9) {
       setTimeout(() => {
@@ -198,6 +199,18 @@ cupos.addEventListener("keypress", function (valor) {
         let afternoon_end = document.getElementById("horat2").value;
         calcular_intervalos(afternoon_start, afternoon_end);
       }, 50);
+    }
+  }
+}
+
+// Admitir solo números y llamado de la funciona de cálculo de intervalos
+cupos.addEventListener("keypress", function (valor) {
+  if (cupos.id == 'cupos') {
+    if (!solo_numeros(valor)) {
+      valor.preventDefault();
+    }
+    if (valor.key >= 0 && valor.key <= 9) {
+      calcular_intervalos_jornada(valor);
     }
   }
 });
@@ -604,26 +617,124 @@ function KeyPressInt(e) {
 }
 cupos.onkeydown = KeyPressCupo;
 
-// Cálculo de hora final
-let hora_final = document.getElementById("btn_hora_final");
-hora_final.addEventListener("click", () => {
-  if (turno_mat.checked && turno_vesp.checked === false) {
-    morning_start = document.getElementById("hora1").value;
-    console.log(morning_start);
-  }
-  if (turno_mat.checked === false && turno_vesp.checked) {
-    afternoon_start = document.getElementById('horat1').value;
-    console.log(afternoon_start);
-  }
-  if(turno_mat.checked && turno_vesp.checked){
-    console.log('Este es más complicado');
+// CÁLCULO DE HORA FINAL
+
+// variables horas
+let hora_inicio_valor = document.getElementById('horainicio').value;
+let hora_inicio = document.getElementById('horainicio');
+let hora_final_valor = document.getElementById('horafinal').value;
+let hora_final = document.getElementById('horafinal');
+//  variables input
+let input_cupos_valor = document.getElementById('cuposhf').value;
+let input_cupos = document.getElementById('cuposhf');
+let input_intervalos_valor = document.getElementById('intervaloshf').value;
+let input_intervalos = document.getElementById('intervaloshf');
+
+// botó aceptar
+let btn_hora_final = document.getElementById('btn_hora_final');
+
+
+// CÁLCULOS POR CAMBIOS DE HORA
+// hora inicio turno mañana
+function cal_hora_final(horai, cupos, interv) {
+  let horahf = horai.split(":");
+  let cuposhf = cupos;
+  let intervhf = interv;
+
+  let hi = new Date();
+  let hf = new Date();
+
+  hi.setHours(horahf[0], horahf[1]);
+
+  let minutes = cuposhf * intervhf;
+
+  hf.setHours(hi.getHours(), hi.getMinutes());
+  hf.setMinutes(hf.getMinutes() + minutes);
+ 
+  let hour = `${hf.getHours()}`;
+  let minute = `${hf.getMinutes()}`;
+  hora_final.value = (hour ? hour <= 9  ? `0${hour}:`: `${hour}:` : "")+(minute ? minute <= 9  ? `0${minute}`: minute : "");
+}
+
+// Calcular al hacer cambios en hora inicio
+hora_inicio.addEventListener('change', () => {
+  input_cupos_valor = document.getElementById('cuposhf').value;
+  input_intervalos_valor = document.getElementById('intervaloshf').value;
+  hora_inicio_valor = document.getElementById('horainicio').value;
+  if (input_cupos_valor && input_intervalos_valor) {
+    cal_hora_final(hora_inicio_valor, input_cupos_valor, input_intervalos_valor);
   }
 });
 
 
-// CÁLCULOS POR CAMBIOS DE HORA 
-// hora inicio turno mañana
-mornings.addEventListener('change', ()=>{
+// Calcular la digitar en el input cupos
+input_cupos.addEventListener('keypress', function(e){
+  if (!solo_numeros(e)) {
+    e.preventDefault();
+  }
+  if (e.key >= 0 && e.key <= 9) {
+    input_cupos_valor = document.getElementById('cuposhf').value;
+    input_intervalos_valor = document.getElementById('intervaloshf').value;
+    hora_inicio_valor = document.getElementById('horainicio').value;
+    if (input_cupos_valor && input_intervalos_valor) {
+      cal_hora_final(hora_inicio_valor, input_cupos_valor, input_intervalos_valor);
+    }
+  }
+});
+
+input_cupos.addEventListener('paste', function(){
+  setTimeout(() => {
+    input_cupos_valor = parseInt(document.getElementById('cuposhf').value);
+    if(Number.isNaN(input_cupos_valor)){
+      input_cupos.value = ""
+      input_intervalos.value = "";
+    }else{
+      input_intervalos_valor = document.getElementById('intervaloshf').value;
+      hora_inicio_valor = document.getElementById('horainicio').value;
+      if (input_cupos_valor && input_intervalos_valor) {
+        cal_hora_final(hora_inicio_valor, input_cupos_valor, input_intervalos_valor);
+      }
+    }
+  },10);
+});
+
+// Calcular al digitar en el input intervalos
+input_intervalos.addEventListener('keypress', (e) => {
+  if (!solo_numeros(e)) {
+    e.preventDefault();
+  }
+  if (e.key >= 0 && e.key <= 9) {
+    setTimeout(() => {
+      input_cupos_valor = document.getElementById('cuposhf').value;
+      input_intervalos_valor = document.getElementById('intervaloshf').value;
+      hora_inicio_valor = document.getElementById('horainicio').value;
+      console.log(input_intervalos_valor);
+      if (input_cupos_valor && input_intervalos_valor) {
+        cal_hora_final(hora_inicio_valor, input_cupos_valor, input_intervalos_valor);
+      }
+    }, 10);
+  }
+});
+
+// Calcular al pegar en input intervalos
+input_intervalos.addEventListener('paste', function(){
+  setTimeout(() => {
+    input_cupos_valor = parseInt(document.getElementById('cuposhf').value);
+    if(Number.isNaN(input_cupos_valor)){
+      input_cupos.value = ""
+      input_intervalos.value = "";
+    }else{
+      input_intervalos_valor = document.getElementById('intervaloshf').value;
+      hora_inicio_valor = document.getElementById('horainicio').value;
+      if (input_cupos_valor && input_intervalos_valor) {
+        cal_hora_final(hora_inicio_valor, input_cupos_valor, input_intervalos_valor);
+      }
+    }
+  },10);
+});
+
+
+mornings.addEventListener('change', () => {
   console.log('Se ha detectado un cambio him');
 });
 
