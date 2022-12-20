@@ -335,6 +335,7 @@ function KeyPressCupo(e) {
       }
     }, 50);
   }
+  // Calcular al dar enter
   if (e.keyCode == 13) {
     cupos_valor = document.getElementById("cupos").value;
     if (cupos_valor != "" && turno_mat.checked == false) {
@@ -650,10 +651,10 @@ function cal_hora_final(horai, cupos, interv) {
 
   hf.setHours(hi.getHours(), hi.getMinutes());
   hf.setMinutes(hf.getMinutes() + minutes);
- 
+
   let hour = `${hf.getHours()}`;
   let minute = `${hf.getMinutes()}`;
-  hora_final.value = (hour ? hour <= 9  ? `0${hour}:`: `${hour}:` : "")+(minute ? minute <= 9  ? `0${minute}`: minute : "");
+  hora_final.value = (hour ? hour <= 9 ? `0${hour}:` : `${hour}:` : "") + (minute ? minute <= 9 ? `0${minute}` : minute : "");
 }
 
 // Calcular al hacer cambios en hora inicio
@@ -668,34 +669,54 @@ hora_inicio.addEventListener('change', () => {
 
 
 // Calcular la digitar en el input cupos
-input_cupos.addEventListener('keypress', function(e){
+input_cupos.addEventListener('keypress', function (e) {
   if (!solo_numeros(e)) {
     e.preventDefault();
   }
   if (e.key >= 0 && e.key <= 9) {
+    setTimeout(() => {
+      input_cupos_valor = document.getElementById('cuposhf').value;
+      input_intervalos_valor = document.getElementById('intervaloshf').value;
+      hora_inicio_valor = document.getElementById('horainicio').value;
+      if (input_cupos_valor && input_intervalos_valor) {
+        cal_hora_final(hora_inicio_valor, input_cupos_valor, input_intervalos_valor);
+      }
+    }, 10);
+  }
+});
+
+
+// Calcular hora final al hacer delete en input cupos
+input_cupos.addEventListener('keyup', (e) => {
+  if (e.key == 'Backspace') {
     input_cupos_valor = document.getElementById('cuposhf').value;
-    input_intervalos_valor = document.getElementById('intervaloshf').value;
-    hora_inicio_valor = document.getElementById('horainicio').value;
-    if (input_cupos_valor && input_intervalos_valor) {
-      cal_hora_final(hora_inicio_valor, input_cupos_valor, input_intervalos_valor);
+    if (input_cupos_valor != "") {
+      input_intervalos_valor = document.getElementById('intervaloshf').value;
+      hora_inicio_valor = document.getElementById('horainicio').value;
+      if (input_cupos_valor && input_intervalos_valor) {
+        cal_hora_final(hora_inicio_valor, input_cupos_valor, input_intervalos_valor);
+      }
+    }else{
+      hora_final.value = "";
     }
   }
 });
 
-input_cupos.addEventListener('paste', function(){
+// Calcular al pegar en el input cupos
+input_cupos.addEventListener('paste', function () {
   setTimeout(() => {
     input_cupos_valor = parseInt(document.getElementById('cuposhf').value);
-    if(Number.isNaN(input_cupos_valor)){
+    if (Number.isNaN(input_cupos_valor)) {
       input_cupos.value = ""
       input_intervalos.value = "";
-    }else{
+    } else {
       input_intervalos_valor = document.getElementById('intervaloshf').value;
       hora_inicio_valor = document.getElementById('horainicio').value;
       if (input_cupos_valor && input_intervalos_valor) {
         cal_hora_final(hora_inicio_valor, input_cupos_valor, input_intervalos_valor);
       }
     }
-  },10);
+  }, 10);
 });
 
 // Calcular al digitar en el input intervalos
@@ -708,7 +729,6 @@ input_intervalos.addEventListener('keypress', (e) => {
       input_cupos_valor = document.getElementById('cuposhf').value;
       input_intervalos_valor = document.getElementById('intervaloshf').value;
       hora_inicio_valor = document.getElementById('horainicio').value;
-      console.log(input_intervalos_valor);
       if (input_cupos_valor && input_intervalos_valor) {
         cal_hora_final(hora_inicio_valor, input_cupos_valor, input_intervalos_valor);
       }
@@ -716,55 +736,60 @@ input_intervalos.addEventListener('keypress', (e) => {
   }
 });
 
+
 // Calcular al pegar en input intervalos
-input_intervalos.addEventListener('paste', function(){
+input_intervalos.addEventListener('paste', function () {
   setTimeout(() => {
     input_cupos_valor = parseInt(document.getElementById('cuposhf').value);
-    if(Number.isNaN(input_cupos_valor)){
+    if (Number.isNaN(input_cupos_valor)) {
       input_cupos.value = ""
       input_intervalos.value = "";
-    }else{
+    } else {
       input_intervalos_valor = document.getElementById('intervaloshf').value;
       hora_inicio_valor = document.getElementById('horainicio').value;
       if (input_cupos_valor && input_intervalos_valor) {
         cal_hora_final(hora_inicio_valor, input_cupos_valor, input_intervalos_valor);
       }
     }
-  },10);
+  }, 10);
 });
 
 
 
 // limpiiar al cerrar modal
 let clear_modal = document.getElementById('close');
-clear_modal.addEventListener('click', ()=>{
+clear_modal.addEventListener('click', () => {
   input_cupos.value = "";
   input_intervalos.value = "";
   hora_inicio.value = "06:00";
   hora_final.value = "--:--";
 })
 
-function validar_jornada(hora){
+// Redireccionar si la jornada es matutina o vespertina
+function validar_jornada(hora) {
   let horajr = hora.split(':');
-  if(horajr[0] >= "00" && horajr[0] <= "11"){
+  if (horajr[0] >= "00" && horajr[0] <= "11") {
     return 1;
   }
-  if(horajr[0] >= "12" && horajr[0] <= "23"){
+  if (horajr[0] >= "12" && horajr[0] <= "23") {
     return 2;
   }
 }
 
 // Botón aceptar del modal calcular hora final
-btn_hora_final.addEventListener('click', ()=>{
+btn_hora_final.addEventListener('click', () => {
   hora_inicio_valor = document.getElementById('horainicio').value;
   hora_final_valor = document.getElementById('horafinal').value;
   input_cupos_valor = document.getElementById('cuposhf').value;
   input_intervalos_valor = document.getElementById('intervaloshf').value;
 
-  if(hora_inicio_valor && hora_final_valor && input_cupos_valor && input_intervalos_valor){
-     console.log(validar_jornada(hora_inicio_valor));
+  if (hora_inicio_valor && hora_final_valor && input_cupos_valor && input_intervalos_valor) {
+    console.log(validar_jornada(hora_inicio_valor));
   }
 });
+
+
+
 
 
 mornings.addEventListener('change', () => {
