@@ -734,6 +734,39 @@ input_intervalos.addEventListener('paste', function(){
 });
 
 
+
+// limpiiar al cerrar modal
+let clear_modal = document.getElementById('close');
+clear_modal.addEventListener('click', ()=>{
+  input_cupos.value = "";
+  input_intervalos.value = "";
+  hora_inicio.value = "06:00";
+  hora_final.value = "--:--";
+})
+
+function validar_jornada(hora){
+  let horajr = hora.split(':');
+  if(horajr[0] >= "00" && horajr[0] <= "11"){
+    return 1;
+  }
+  if(horajr[0] >= "12" && horajr[0] <= "23"){
+    return 2;
+  }
+}
+
+// Botón aceptar del modal calcular hora final
+btn_hora_final.addEventListener('click', ()=>{
+  hora_inicio_valor = document.getElementById('horainicio').value;
+  hora_final_valor = document.getElementById('horafinal').value;
+  input_cupos_valor = document.getElementById('cuposhf').value;
+  input_intervalos_valor = document.getElementById('intervaloshf').value;
+
+  if(hora_inicio_valor && hora_final_valor && input_cupos_valor && input_intervalos_valor){
+     console.log(validar_jornada(hora_inicio_valor));
+  }
+});
+
+
 mornings.addEventListener('change', () => {
   console.log('Se ha detectado un cambio him');
 });
