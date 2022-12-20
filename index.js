@@ -755,6 +755,22 @@ input_intervalos.addEventListener('paste', function () {
 });
 
 
+// Calcular hora final al hacer delete en input Intervalos
+input_intervalos.addEventListener('keyup', (e) => {
+  if (e.key == 'Backspace') {
+    input_intervalos_valor = document.getElementById('intervaloshf').value;
+    if (input_intervalos_valor != "") {
+      input_cupos_valor = document.getElementById('cuposhf').value;
+      hora_inicio_valor = document.getElementById('horainicio').value;
+      if (input_cupos_valor && input_intervalos_valor) {
+        cal_hora_final(hora_inicio_valor, input_cupos_valor, input_intervalos_valor);
+      }
+    }else{
+      hora_final.value = "";
+    }
+  }
+});
+
 
 // limpiiar al cerrar modal
 let clear_modal = document.getElementById('close');
