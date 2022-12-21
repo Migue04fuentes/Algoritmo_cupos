@@ -33,11 +33,11 @@ let check_hf = document.getElementById("check_hf");
 // Mandar hora al iniciar página
 (function () {
   // Horas matutinas
-  document.getElementById("hora1").value = "06:00";
-  document.getElementById("hora2").value = "12:00";
+  mornings.value = "06:00";
+  morninge.value = "12:00";
   // Horas Jornada Vespertina
-  document.getElementById("horat1").value = "13:00";
-  document.getElementById("horat2").value = "17:00";
+  afternoons.value = "13:00";
+  afternoone.value = "17:00";
 
   // Hora Inicial para el cálculo de la hora final
   document.getElementById("horainicio").value = "06:00";
@@ -58,15 +58,13 @@ function solo_numeros(e) {
 
 // Disabled & Enabled check hora final
 check_hf.addEventListener("click", () => {
-  afternoons = document.getElementById("horat1");
-  afternoone = document.getElementById("horat2");
 
   if (check_hf.checked) {
     morninge.disabled = true;
     afternoone.disabled = true;
   } else if (!check_hf.checked) {
-    morninge.disabled = false;
-    afternoone.disabled = false;
+    turno_mat.checked ? morninge.disabled = false : morninge.disabled = true;
+    turno_vesp.checked ? afternoone.disabled = false : afternoone.disabled = true;
   }
 });
 
@@ -193,45 +191,95 @@ function calcular_fulltime_intervalos(hr1, hr2, hr3, hr4) {
   intervalos.value = total_int;
 }
 
-// Función calculos por jornada
-function calcular_intervalos_jornada(valor) {
+// Función calculos intervalos por jornada
+function calcular_intervalos_jornada() {
   if (turno_mat.checked && turno_vesp.checked) {
-    if (valor.key >= 0 && valor.key <= 9) {
-      setTimeout(() => {
-        num = document.getElementById("cupos").value;
-        let morning_start = document.getElementById("hora1").value;
-        let morning_end = document.getElementById("hora2").value;
-        let afternoon_start = document.getElementById("horat1").value;
-        let afternoon_end = document.getElementById("horat2").value;
-        calcular_fulltime_intervalos(
-          morning_start,
-          morning_end,
-          afternoon_start,
-          afternoon_end
-        );
-      }, 50);
-    }
+    setTimeout(() => {
+      num = document.getElementById("cupos").value;
+      let morning_start = document.getElementById("hora1").value;
+      let morning_end = document.getElementById("hora2").value;
+      let afternoon_start = document.getElementById("horat1").value;
+      let afternoon_end = document.getElementById("horat2").value;
+      calcular_fulltime_intervalos(
+        morning_start,
+        morning_end,
+        afternoon_start,
+        afternoon_end
+      );
+    }, 50);
   }
   if (turno_mat && turno_vesp.checked == false) {
-    if (valor.key >= 0 && valor.key <= 9) {
-      setTimeout(() => {
-        num = document.getElementById("cupos").value;
-        let morning_start = document.getElementById("hora1").value;
-        let morning_end = document.getElementById("hora2").value;
-        calcular_intervalos(morning_start, morning_end);
-      }, 50);
-    }
+    setTimeout(() => {
+      num = document.getElementById("cupos").value;
+      let morning_start = document.getElementById("hora1").value;
+      let morning_end = document.getElementById("hora2").value;
+      calcular_intervalos(morning_start, morning_end);
+    }, 50);
   }
   if (turno_vesp && turno_mat.checked == false) {
-    if (valor.key >= 0 && valor.key <= 9) {
-      setTimeout(() => {
-        num = document.getElementById("cupos").value;
-        let afternoon_start = document.getElementById("horat1").value;
-        let afternoon_end = document.getElementById("horat2").value;
-        calcular_intervalos(afternoon_start, afternoon_end);
-      }, 50);
-    }
+    setTimeout(() => {
+      num = document.getElementById("cupos").value;
+      let afternoon_start = document.getElementById("horat1").value;
+      let afternoon_end = document.getElementById("horat2").value;
+      calcular_intervalos(afternoon_start, afternoon_end);
+    }, 50);
   }
+}
+
+// jornada calculo hora final
+function jornada_hora_final() {
+
+  setTimeout(() => {
+    let cuposhf = cupos.value;
+    let intervhf = intervalos.value;
+    if (cuposhf && intervhf) {
+      (turno_mat.checked && !turno_vesp.checked) ? calcular_hora_final(morninge)
+        : (!turno_mat.checked && turno_vesp.checked) ? calcular_hora_final(afternoone)
+          : (turno_mat.checked && turno_vesp.checked) ? calcular_hf_fulltime() : "";
+    }
+  }, 5);
+}
+
+// Calculos de hora final
+function calcular_hora_final(jornada) {
+  let horams = mornings.value;
+  let horats = afternoons.value;
+  setTimeout(() => {
+    let cuposhf = cupos.value;
+    let intervhf = intervalos.value;
+    let horacal;
+    let hora_final;
+    if (jornada.id == 'hora2') {
+      horacal = horams;
+      hora_final = morninge;
+    }
+    if (jornada.id == 'horat2') {
+      horacal = horats;
+      hora_final = afternoone;
+    }
+
+    let horahf = horacal.split(":");
+
+    let hi = new Date();
+    let hf = new Date();
+
+    hi.setHours(horahf[0], horahf[1]);
+
+    let minutes = cuposhf * intervhf;
+
+    hf.setHours(hi.getHours(), hi.getMinutes());
+    hf.setMinutes(hf.getMinutes() + minutes);
+
+    let hour = `${hf.getHours()}`;
+    let minute = `${hf.getMinutes()}`;
+    hora_final.value =
+      (hour ? (hour <= 9 ? `0${hour}:` : `${hour}:`) : "") +
+      (minute ? (minute <= 9 ? `0${minute}` : minute) : "");
+  }, 5);
+}
+
+function calcular_hf_fulltime() {
+  console.log('calcular hora final fulltime');
 }
 
 // Admitir solo números y llamado de la funciona de cálculo de intervalos
@@ -240,17 +288,7 @@ cupos.addEventListener("keypress", function (valor) {
     valor.preventDefault();
   }
   if (valor.key >= 0 && valor.key <= 9) {
-    if (!check_hf.checked) {
-      calcular_intervalos_jornada(valor);
-    } else if (check_hf.checked) {
-      if (turno_mat.checked && turno_vesp.checked) {
-        console.log("Ambos turnos activados para calculo hora final");
-      } else if (turno_mat.checked && !turno_vesp.checked) {
-        console.log("Turno de vesp cerrado en CHF");
-      } else if (!turno_mat.checked && turno_vesp.checked) {
-        console.log("Truno de mañ cerrado en CHF");
-      }
-    }
+    check_hf.checked ? jornada_hora_final() : calcular_intervalos_jornada();
   }
 });
 
@@ -470,47 +508,49 @@ function calcular_fulltime_cupos(hr1, hr2, hr3, hr4) {
   cupos.value = total_cupos;
 }
 
+
+// Calcular cupos por jornada
+function calular_cupos_jornada() {
+  if (turno_mat && turno_vesp) {
+    setTimeout(() => {
+      intv = document.getElementById("intervalos").value;
+      let morning_start = document.getElementById("hora1").value;
+      let morning_end = document.getElementById("hora2").value;
+      let afternoon_start = document.getElementById("horat1").value;
+      let afternoon_end = document.getElementById("horat2").value;
+      calcular_fulltime_cupos(
+        morning_start,
+        morning_end,
+        afternoon_start,
+        afternoon_end
+      );
+    }, 50);
+  }
+  if (turno_mat && turno_vesp.checked == false) {
+    setTimeout(() => {
+      intv = document.getElementById("intervalos").value;
+      let morning_start = document.getElementById("hora1").value;
+      let morning_end = document.getElementById("hora2").value;
+      calcular_cupos(morning_start, morning_end);
+    }, 50);
+  }
+  if (turno_vesp && turno_mat.checked == false) {
+    setTimeout(() => {
+      intv = document.getElementById("intervalos").value;
+      let afternoon_start = document.getElementById("horat1").value;
+      let afternoon_end = document.getElementById("horat2").value;
+      calcular_cupos(afternoon_start, afternoon_end);
+    }, 50);
+  }
+}
+
 // Admitir solo números y llamado de la función de Cálculo de Cupos
 intervalos.addEventListener("keypress", function (e) {
   if (!solo_numeros(e)) {
     e.preventDefault();
   }
-  if (turno_mat && turno_vesp) {
-    if (e.key >= 0 && e.key <= 9) {
-      setTimeout(() => {
-        intv = document.getElementById("intervalos").value;
-        let morning_start = document.getElementById("hora1").value;
-        let morning_end = document.getElementById("hora2").value;
-        let afternoon_start = document.getElementById("horat1").value;
-        let afternoon_end = document.getElementById("horat2").value;
-        calcular_fulltime_cupos(
-          morning_start,
-          morning_end,
-          afternoon_start,
-          afternoon_end
-        );
-      }, 50);
-    }
-  }
-  if (turno_mat && turno_vesp.checked == false) {
-    if (e.key >= 0 && e.key <= 9) {
-      setTimeout(() => {
-        intv = document.getElementById("intervalos").value;
-        let morning_start = document.getElementById("hora1").value;
-        let morning_end = document.getElementById("hora2").value;
-        calcular_cupos(morning_start, morning_end);
-      }, 50);
-    }
-  }
-  if (turno_vesp && turno_mat.checked == false) {
-    if (e.key >= 0 && e.key <= 9) {
-      setTimeout(() => {
-        intv = document.getElementById("intervalos").value;
-        let afternoon_start = document.getElementById("horat1").value;
-        let afternoon_end = document.getElementById("horat2").value;
-        calcular_cupos(afternoon_start, afternoon_end);
-      }, 50);
-    }
+  if (e.key >= 0 && e.key <= 9) {
+    check_hf.checked ? jornada_hora_final() : calular_cupos_jornada();
   }
 });
 
