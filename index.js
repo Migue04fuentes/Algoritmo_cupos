@@ -279,7 +279,7 @@ function calcular_hora_final(jornada) {
 }
 
 function calcular_hf_fulltime() {
-  console.log('calcular hora final fulltime');
+  console.log('Debe calcular uno a la vez.');
 }
 
 // Admitir solo números y llamado de la funciona de cálculo de intervalos
@@ -294,9 +294,10 @@ cupos.addEventListener("keypress", function (valor) {
 
 // Activar función al pegar en input cupos
 cupos.addEventListener("paste", function () {
-  if (!check_hf.checked) {
-    setTimeout(() => {
-      num = parseInt(document.getElementById("cupos").value);
+
+  setTimeout(() => {
+    num = parseInt(document.getElementById("cupos").value);
+    if (!check_hf.checked) {
       if (Number.isNaN(num)) {
         intv = "";
         num = "";
@@ -331,45 +332,53 @@ cupos.addEventListener("paste", function () {
           calcular_intervalos(afternoon_start, afternoon_end);
         }
       }
-    }, 50);
-  } else if (check_hf.checked) {
-    console.log("Cálculo por doble turno está activada.");
-  }
+    } else if (check_hf.checked) {
+      console.log("Paste cupos hora final.");
+      if (Number.isNaN(num)) {
+        cupos.value = "";
+      }
+    }
+  }, 5);
 });
 
 // Realizar Funciones al hacer DELETE
 cupos.addEventListener("keyup", function (event) {
+
   if (event.key == "Backspace") {
-    num = num.substring(0, num.length - 1);
-    cupos_valor = document.getElementById("cupos").value;
-    num = cupos_valor;
-    if (cupos_valor == "") {
-      intervalos.innerHTML = "";
-      intervalos.value = "";
-      num = "";
-      intv = "";
-    }
-    if (num != "" && turno_mat.checked && turno_vesp.checked) {
-      let morning_start = document.getElementById("hora1").value;
-      let morning_end = document.getElementById("hora2").value;
-      let afternoon_start = document.getElementById("horat1").value;
-      let afternoon_end = document.getElementById("horat2").value;
-      calcular_fulltime_intervalos(
-        morning_start,
-        morning_end,
-        afternoon_start,
-        afternoon_end
-      );
-    }
-    if (num != "" && turno_mat && turno_vesp.checked == false) {
-      let morning_start = document.getElementById("hora1").value;
-      let morning_end = document.getElementById("hora2").value;
-      calcular_intervalos(morning_start, morning_end);
-    }
-    if (num != "" && turno_vesp && turno_mat.checked == false) {
-      let morning_start = document.getElementById("horat1").value;
-      let morning_end = document.getElementById("horat2").value;
-      calcular_intervalos(morning_start, morning_end);
+    if (!check_hf.checked) {
+      num = num.substring(0, num.length - 1);
+      cupos_valor = document.getElementById("cupos").value;
+      num = cupos_valor;
+      if (cupos_valor == "") {
+        intervalos.innerHTML = "";
+        intervalos.value = "";
+        num = "";
+        intv = "";
+      }
+      if (num != "" && turno_mat.checked && turno_vesp.checked) {
+        let morning_start = document.getElementById("hora1").value;
+        let morning_end = document.getElementById("hora2").value;
+        let afternoon_start = document.getElementById("horat1").value;
+        let afternoon_end = document.getElementById("horat2").value;
+        calcular_fulltime_intervalos(
+          morning_start,
+          morning_end,
+          afternoon_start,
+          afternoon_end
+        );
+      }
+      if (num != "" && turno_mat && turno_vesp.checked == false) {
+        let morning_start = document.getElementById("hora1").value;
+        let morning_end = document.getElementById("hora2").value;
+        calcular_intervalos(morning_start, morning_end);
+      }
+      if (num != "" && turno_vesp && turno_mat.checked == false) {
+        let morning_start = document.getElementById("horat1").value;
+        let morning_end = document.getElementById("horat2").value;
+        calcular_intervalos(morning_start, morning_end);
+      }
+    } else if (check_hf.checked) {
+      console.log('Delete cupos hora final');
     }
   }
 });
@@ -378,70 +387,74 @@ cupos.addEventListener("keyup", function (event) {
 function KeyPressCupo(e) {
   // var evtobj = window.event ? event : e
   if (e.keyCode == 90 && e.ctrlKey) {
-    setTimeout(() => {
-      num = parseInt(document.getElementById("cupos").value);
-      if (Number.isNaN(num) || num == "") {
-        intv = "";
-        num = "";
-        cupos.innerHTML = "";
-        cupos.value = "";
-        intervalos.innertHTML = "";
-        intervalos.value = "";
-      } else {
-        if (turno_mat.checked && turno_vesp.checked) {
-          num += "";
-          let morning_start = document.getElementById("hora1").value;
-          let morning_end = document.getElementById("hora2").value;
-          let afternoon_start = document.getElementById("horat1").value;
-          let afternoon_end = document.getElementById("horat2").value;
-          calcular_fulltime_intervalos(
-            morning_start,
-            morning_end,
-            afternoon_start,
-            afternoon_end
-          );
+    if (!check_hf.checked) {
+      setTimeout(() => {
+        num = parseInt(document.getElementById("cupos").value);
+        if (Number.isNaN(num) || num == "") {
+          intv = "";
+          num = "";
+          cupos.innerHTML = "";
+          cupos.value = "";
+          intervalos.innertHTML = "";
+          intervalos.value = "";
+        } else {
+          if (turno_mat.checked && turno_vesp.checked) {
+            num += "";
+            let morning_start = document.getElementById("hora1").value;
+            let morning_end = document.getElementById("hora2").value;
+            let afternoon_start = document.getElementById("horat1").value;
+            let afternoon_end = document.getElementById("horat2").value;
+            calcular_fulltime_intervalos(
+              morning_start,
+              morning_end,
+              afternoon_start,
+              afternoon_end
+            );
+          }
+          if (turno_mat && turno_vesp.checked == false) {
+            num += "";
+            let morning_start = document.getElementById("hora1").value;
+            let morning_end = document.getElementById("hora2").value;
+            calcular_intervalos(morning_start, morning_end);
+          }
+          if (turno_vesp && turno_mat.checked == false) {
+            num += "";
+            let morning_start = document.getElementById("horat1").value;
+            let morning_end = document.getElementById("horat2").value;
+            calcular_intervalos(morning_start, morning_end);
+          }
         }
-        if (turno_mat && turno_vesp.checked == false) {
-          num += "";
-          let morning_start = document.getElementById("hora1").value;
-          let morning_end = document.getElementById("hora2").value;
-          calcular_intervalos(morning_start, morning_end);
-        }
-        if (turno_vesp && turno_mat.checked == false) {
-          num += "";
-          let morning_start = document.getElementById("horat1").value;
-          let morning_end = document.getElementById("horat2").value;
-          calcular_intervalos(morning_start, morning_end);
-        }
-      }
-    }, 50);
+      }, 50);
+    } else if (check_hf.checked) { console.log('Ctrl+z en cupos hora final'); }
   }
   // Calcular al dar enter
   if (e.keyCode == 13) {
-    cupos_valor = document.getElementById("cupos").value;
-    if (cupos_valor != "" && turno_mat.checked == false) {
-      num = document.getElementById("cupos").value;
-      let afternoon_start = document.getElementById("horat1").value;
-      let afternoon_end = document.getElementById("horat2").value;
-      calcular_intervalos(afternoon_start, afternoon_end);
-    } else if (cupos_valor != "" && turno_vesp.checked == false) {
-      num = document.getElementById("cupos").value;
-      let morning_start = document.getElementById("hora1").value;
-      let morning_end = document.getElementById("hora2").value;
-      calcular_intervalos(morning_start, morning_end);
-    } else if (cupos_valor != "" && turno_mat.checked && turno_vesp.checked) {
-      num = document.getElementById("cupos").value;
-      let morning_start = document.getElementById("hora1").value;
-      let morning_end = document.getElementById("hora2").value;
-      let afternoon_start = document.getElementById("horat1").value;
-      let afternoon_end = document.getElementById("horat2").value;
-      calcular_fulltime_intervalos(
-        morning_start,
-        morning_end,
-        afternoon_start,
-        afternoon_end
-      );
-    }
+    if (!check_hf.checked) {
+      cupos_valor = document.getElementById("cupos").value;
+      if (cupos_valor != "" && turno_mat.checked == false) {
+        num = document.getElementById("cupos").value;
+        let afternoon_start = document.getElementById("horat1").value;
+        let afternoon_end = document.getElementById("horat2").value;
+        calcular_intervalos(afternoon_start, afternoon_end);
+      } else if (cupos_valor != "" && turno_vesp.checked == false) {
+        num = document.getElementById("cupos").value;
+        let morning_start = document.getElementById("hora1").value;
+        let morning_end = document.getElementById("hora2").value;
+        calcular_intervalos(morning_start, morning_end);
+      } else if (cupos_valor != "" && turno_mat.checked && turno_vesp.checked) {
+        num = document.getElementById("cupos").value;
+        let morning_start = document.getElementById("hora1").value;
+        let morning_end = document.getElementById("hora2").value;
+        let afternoon_start = document.getElementById("horat1").value;
+        let afternoon_end = document.getElementById("horat2").value;
+        calcular_fulltime_intervalos(
+          morning_start,
+          morning_end,
+          afternoon_start,
+          afternoon_end
+        );
+      }
+    } else if (check_hf.checked) { console.log('Enter cupos hora final') }
   }
 }
 intervalos.onkeydown = KeyPressInt;
@@ -556,91 +569,14 @@ intervalos.addEventListener("keypress", function (e) {
 
 //Activar función al pegar
 intervalos.addEventListener("paste", function () {
+
   setTimeout(() => {
     intv = parseInt(document.getElementById("intervalos").value);
-    if (Number.isNaN(intv)) {
-      intv = "";
-      num = "";
-      cupos.innerHTML = "";
-      intervalos.innertHTML = "";
-      intervalos.value = "";
-    } else {
-      if (turno_mat.checked && turno_vesp.checked) {
-        intv += "";
-        let morning_start = document.getElementById("hora1").value;
-        let morning_end = document.getElementById("hora2").value;
-        let afternoon_start = document.getElementById("horat1").value;
-        let afternoon_end = document.getElementById("horat2").value;
-        calcular_fulltime_cupos(
-          morning_start,
-          morning_end,
-          afternoon_start,
-          afternoon_end
-        );
-      }
-      if (turno_mat && turno_vesp.checked == false) {
-        intv += "";
-        let morning_start = document.getElementById("hora1").value;
-        let morning_end = document.getElementById("hora2").value;
-        calcular_cupos(morning_start, morning_end);
-      }
-      if (turno_vesp && turno_mat.checked == false) {
-        intv += "";
-        let afternoon_start = document.getElementById("horat1").value;
-        let afternoon_end = document.getElementById("horat2").value;
-        calcular_cupos(afternoon_start, afternoon_end);
-      }
-    }
-  }, 50);
-});
-
-// DELETE en intervalos
-intervalos.addEventListener("keyup", function (event) {
-  if (event.key == "Backspace") {
-    intv = intv.substring(0, intv.length - 1);
-    interv_valor = document.getElementById("intervalos").value;
-    intv = interv_valor;
-    if (interv_valor == "") {
-      cupos.innerHTML = "";
-      cupos.value = "";
-      intv = "";
-      num = "";
-    }
-    if (intv != "" && turno_mat.checked && turno_vesp.checked) {
-      let morning_start = document.getElementById("hora1").value;
-      let morning_end = document.getElementById("hora2").value;
-      let afternoon_start = document.getElementById("horat1").value;
-      let afternoon_end = document.getElementById("horat2").value;
-      calcular_fulltime_cupos(
-        morning_start,
-        morning_end,
-        afternoon_start,
-        afternoon_end
-      );
-    }
-    if (intv != "" && turno_mat && turno_vesp.checked == false) {
-      let morning_start = document.getElementById("hora1").value;
-      let morning_end = document.getElementById("hora2").value;
-      calcular_cupos(morning_start, morning_end);
-    }
-    if (intv != "" && turno_vesp && turno_mat.checked == false) {
-      let afternoon_start = document.getElementById("horat1").value;
-      let afternoon_end = document.getElementById("horat2").value;
-      calcular_cupos(afternoon_start, afternoon_end);
-    }
-  }
-});
-
-// función de control z en el input intervalos
-function KeyPressInt(e) {
-  if (e.keyCode == 90 && e.ctrlKey) {
-    setTimeout(() => {
-      intv = parseInt(document.getElementById("intervalos").value);
-      if (Number.isNaN(intv) || intv == "") {
+    if (!check_hf.checked) {
+      if (Number.isNaN(intv)) {
         intv = "";
         num = "";
         cupos.innerHTML = "";
-        cupos.value = "";
         intervalos.innertHTML = "";
         intervalos.value = "";
       } else {
@@ -670,33 +606,129 @@ function KeyPressInt(e) {
           calcular_cupos(afternoon_start, afternoon_end);
         }
       }
-    }, 50);
+    } else if (check_hf.checked) {
+      console.log('Paste intervalos hora final');
+      if (Number.isNaN(intv)) {
+        intervalos.value = "";
+      }
+    }
+  }, 5);
+});
+
+// DELETE en intervalos
+intervalos.addEventListener("keyup", function (event) {
+
+  if (event.key == "Backspace") {
+    if (!check_hf.checked) {
+      intv = intv.substring(0, intv.length - 1);
+      interv_valor = document.getElementById("intervalos").value;
+      intv = interv_valor;
+      if (interv_valor == "") {
+        cupos.innerHTML = "";
+        cupos.value = "";
+        intv = "";
+        num = "";
+      }
+      if (intv != "" && turno_mat.checked && turno_vesp.checked) {
+        let morning_start = document.getElementById("hora1").value;
+        let morning_end = document.getElementById("hora2").value;
+        let afternoon_start = document.getElementById("horat1").value;
+        let afternoon_end = document.getElementById("horat2").value;
+        calcular_fulltime_cupos(
+          morning_start,
+          morning_end,
+          afternoon_start,
+          afternoon_end
+        );
+      }
+      if (intv != "" && turno_mat && turno_vesp.checked == false) {
+        let morning_start = document.getElementById("hora1").value;
+        let morning_end = document.getElementById("hora2").value;
+        calcular_cupos(morning_start, morning_end);
+      }
+      if (intv != "" && turno_vesp && turno_mat.checked == false) {
+        let afternoon_start = document.getElementById("horat1").value;
+        let afternoon_end = document.getElementById("horat2").value;
+        calcular_cupos(afternoon_start, afternoon_end);
+      }
+    } else if (check_hf.checked) {
+      console.log('Delete intervalos hora final');
+    }
+  }
+});
+
+// función de control z en el input intervalos
+function KeyPressInt(e) {
+  if (e.keyCode == 90 && e.ctrlKey) {
+    if (!check_hf.checked) {
+      setTimeout(() => {
+        intv = parseInt(document.getElementById("intervalos").value);
+        if (Number.isNaN(intv) || intv == "") {
+          intv = "";
+          num = "";
+          cupos.innerHTML = "";
+          cupos.value = "";
+          intervalos.innertHTML = "";
+          intervalos.value = "";
+        } else {
+          if (turno_mat.checked && turno_vesp.checked) {
+            intv += "";
+            let morning_start = document.getElementById("hora1").value;
+            let morning_end = document.getElementById("hora2").value;
+            let afternoon_start = document.getElementById("horat1").value;
+            let afternoon_end = document.getElementById("horat2").value;
+            calcular_fulltime_cupos(
+              morning_start,
+              morning_end,
+              afternoon_start,
+              afternoon_end
+            );
+          }
+          if (turno_mat && turno_vesp.checked == false) {
+            intv += "";
+            let morning_start = document.getElementById("hora1").value;
+            let morning_end = document.getElementById("hora2").value;
+            calcular_cupos(morning_start, morning_end);
+          }
+          if (turno_vesp && turno_mat.checked == false) {
+            intv += "";
+            let afternoon_start = document.getElementById("horat1").value;
+            let afternoon_end = document.getElementById("horat2").value;
+            calcular_cupos(afternoon_start, afternoon_end);
+          }
+        }
+      }, 50);
+    } else if (check_hf.checked) {
+      console.log('Ctrl+z intervalos hora final');
+    }
   }
   if (e.keyCode == 13) {
-    cupos_valor = document.getElementById("cupos").value;
-    if (cupos_valor != "" && turno_mat.checked == false) {
-      num = document.getElementById("cupos").value;
-      let afternoon_start = document.getElementById("horat1").value;
-      let afternoon_end = document.getElementById("horat2").value;
-      calcular_cupos(afternoon_start, afternoon_end);
-    } else if (cupos_valor != "" && turno_vesp.checked == false) {
-      num = document.getElementById("cupos").value;
-      let morning_start = document.getElementById("hora1").value;
-      let morning_end = document.getElementById("hora2").value;
-      calcular_cupos(morning_start, morning_end);
-    } else if (cupos_valor != "" && turno_mat.checked && turno_vesp.checked) {
-      num = document.getElementById("cupos").value;
-      let morning_start = document.getElementById("hora1").value;
-      let morning_end = document.getElementById("hora2").value;
-      let afternoon_start = document.getElementById("horat1").value;
-      let afternoon_end = document.getElementById("horat2").value;
-      calcular_fulltime_cupos(
-        morning_start,
-        morning_end,
-        afternoon_start,
-        afternoon_end
-      );
-    }
+    if (!check_hf.checked) {
+      cupos_valor = document.getElementById("cupos").value;
+      if (cupos_valor != "" && turno_mat.checked == false) {
+        num = document.getElementById("cupos").value;
+        let afternoon_start = document.getElementById("horat1").value;
+        let afternoon_end = document.getElementById("horat2").value;
+        calcular_cupos(afternoon_start, afternoon_end);
+      } else if (cupos_valor != "" && turno_vesp.checked == false) {
+        num = document.getElementById("cupos").value;
+        let morning_start = document.getElementById("hora1").value;
+        let morning_end = document.getElementById("hora2").value;
+        calcular_cupos(morning_start, morning_end);
+      } else if (cupos_valor != "" && turno_mat.checked && turno_vesp.checked) {
+        num = document.getElementById("cupos").value;
+        let morning_start = document.getElementById("hora1").value;
+        let morning_end = document.getElementById("hora2").value;
+        let afternoon_start = document.getElementById("horat1").value;
+        let afternoon_end = document.getElementById("horat2").value;
+        calcular_fulltime_cupos(
+          morning_start,
+          morning_end,
+          afternoon_start,
+          afternoon_end
+        );
+      }
+    }else if(check_hf.checked){console.log('Enter intervalos hora final');}
   }
 }
 cupos.onkeydown = KeyPressCupo;
