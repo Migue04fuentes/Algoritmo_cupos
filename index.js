@@ -60,19 +60,13 @@ function solo_numeros(e) {
 check_hf.addEventListener("click", () => {
 
   if (check_hf.checked) {
-    if (cupos.value && intervalos.value) {
-      morninge.disabled = true;
-      afternoone.disabled = true;
-    } else {
       morninge.disabled = true;
       morninge.value = "";
       afternoone.disabled = true;
       afternoone.value = "";
-    }
   } else if (!check_hf.checked) {
-    turno_mat.checked ? morninge.disabled = false : morninge.disabled = true;
-    turno_vesp.checked ? afternoone.disabled = false : afternoone.disabled = true;
-    (morninge.value != "" && afternoone.value != "") ? console.log(morninge.value, afternoone.value) : (morninge.value = "12:00", afternoone.value = "18:00");
+    turno_mat.checked ? (morninge.disabled = false, (morninge.value == "")?morninge.value = "12:00": ""): morninge.disabled = true,(morninge.value == "")?morninge.value ='12:00': morninge.value=="" ? morninge.value='12:00':'';
+    turno_vesp.checked ? (afternoone.disabled = false, (afternoone.value == "")? afternoone.value = '18:00':'') : afternoone.disabled = true,(afternoone.value == "")?afternoone.value ='18:00': afternoone.value=="" ? afternoone.value='18:00':'';
   }
 });
 
@@ -155,10 +149,14 @@ function calcular_intervalos(hora1, hora2) {
     (h2.getHours() - h1.getHours()) * 60 + h2.getMinutes() - h1.getMinutes();
 
   let totalint = minutes / num;
+  totalint += "";
+  totalint.length > 4 ? totalint = totalint.slice(0,4) : "";
   intv = totalint + "";
   intervalos.value = totalint;
 
-  let resultado = document.getElementById("resultado");
+
+
+ /*  let resultado = document.getElementById("resultado");
   resultado.innerHTML =
     "Total de horas: " +
     (ht.getHours()
@@ -169,7 +167,7 @@ function calcular_intervalos(hora1, hora2) {
       ? ht.getMinutes() + (ht.getMinutes() > 1 ? " Minutos" : " Minuto")
       : "") +
     "  Que es igual a= " +
-    (minutes ? minutes + (minutes > 1 ? "Minutos" : "Minuto") : "");
+    (minutes ? minutes + (minutes > 1 ? ":Minutos" : "Minuto") : ""); */
 }
 
 // Cáculo de intervalos en los dos turno activos
@@ -195,6 +193,8 @@ function calcular_fulltime_intervalos(hr1, hr2, hr3, hr4) {
     (h2.getHours() - h1.getHours() + (h4.getHours() - h3.getHours())) * 60 +
     (h2.getMinutes() - h1.getMinutes() + (h4.getMinutes() - h3.getMinutes()));
   let total_int = minutes / num;
+  total_int +="";
+  total_int.length > 4 ? total_int = total_int.slice(0,4) : "";
   intv = total_int + "";
   intervalos.value = total_int;
 }
@@ -496,18 +496,10 @@ function calcular_cupos(hora1, hora2) {
     (h2.getHours() - h1.getHours()) * 60 + h2.getMinutes() - h1.getMinutes();
 
   let totalcup = minutes / intv;
+  totalcup +="";
+  totalcup.length > 4 ? totalcup = totalcup.slice(0,4) : "";
   num = totalcup + "";
   cupos.value = totalcup;
-
-  let resultado = document.getElementById("resultado");
-  resultado.innerHTML =
-    (ht.getHours()
-      ? ht.getHours() + (ht.getHours() > 1 ? " horas" : "hora")
-      : "") +
-    "" +
-    (ht.getMinutes()
-      ? ht.getMinutes() + (ht.getMinutes() > 1 ? " Minutos" : " Minuto")
-      : "");
 }
 
 // Cálculos fulltime de cupos
@@ -533,6 +525,8 @@ function calcular_fulltime_cupos(hr1, hr2, hr3, hr4) {
     (h2.getHours() - h1.getHours() + (h4.getHours() - h3.getHours())) * 60 +
     (h2.getMinutes() - h1.getMinutes() + (h4.getMinutes() - h3.getMinutes()));
   let total_cupos = minutes / intv;
+  total_cupos +="";
+  total_cupos.length > 4 ? total_cupos = total_cupos.slice(0,4) : "";
   num = total_cupos + "";
   cupos.value = total_cupos;
 }
