@@ -36,8 +36,8 @@ let check_hf = document.getElementById("check_hf");
   mornings.value = "06:00";
   morninge.value = "12:00";
   // Horas Jornada Vespertina
-  afternoons.value = "13:00";
-  afternoone.value = "17:00";
+  afternoons.value = "14:00";
+  afternoone.value = "18:00";
 
   // Hora Inicial para el cálculo de la hora final
   document.getElementById("horainicio").value = "06:00";
@@ -60,11 +60,19 @@ function solo_numeros(e) {
 check_hf.addEventListener("click", () => {
 
   if (check_hf.checked) {
-    morninge.disabled = true;
-    afternoone.disabled = true;
+    if (cupos.value && intervalos.value) {
+      morninge.disabled = true;
+      afternoone.disabled = true;
+    } else {
+      morninge.disabled = true;
+      morninge.value = "";
+      afternoone.disabled = true;
+      afternoone.value = "";
+    }
   } else if (!check_hf.checked) {
     turno_mat.checked ? morninge.disabled = false : morninge.disabled = true;
     turno_vesp.checked ? afternoone.disabled = false : afternoone.disabled = true;
+    (morninge.value != "" && afternoone.value != "") ? console.log(morninge.value, afternoone.value) : (morninge.value = "12:00", afternoone.value = "18:00");
   }
 });
 
@@ -335,7 +343,7 @@ cupos.addEventListener("paste", function () {
     } else if (check_hf.checked) {
       if (Number.isNaN(num)) {
         cupos.value = "";
-      }else{
+      } else {
         jornada_hora_final();
       }
     }
@@ -379,7 +387,8 @@ cupos.addEventListener("keyup", function (event) {
         calcular_intervalos(morning_start, morning_end);
       }
     } else if (check_hf.checked) {
-      jornada_hora_final();
+      let cupo = document.getElementById('cupos').value;
+      cupo ? jornada_hora_final() : turno_mat.checked ? morninge.value = "" : turno_vesp.checked ? afternoone.value = "" : "";
     }
   }
 });
@@ -426,7 +435,11 @@ function KeyPressCupo(e) {
           }
         }
       }, 50);
-    } else if (check_hf.checked) { console.log('Ctrl+z en cupos hora final'); }
+    } else if (check_hf.checked) {
+      setTimeout(() => {
+        cupos.value ? jornada_hora_final() : turno_mat.checked ? morninge.value = "" : turno_vesp.checked ? afternoone.value = "" : "";
+      }, 1);
+    }
   }
   // Calcular al dar enter
   if (e.keyCode == 13) {
@@ -455,7 +468,9 @@ function KeyPressCupo(e) {
           afternoon_end
         );
       }
-    } else if (check_hf.checked) { console.log('Enter cupos hora final') }
+    } else if (check_hf.checked) {
+      jornada_hora_final();
+    }
   }
 }
 intervalos.onkeydown = KeyPressInt;
@@ -610,7 +625,7 @@ intervalos.addEventListener("paste", function () {
     } else if (check_hf.checked) {
       if (Number.isNaN(intv)) {
         intervalos.value = "";
-      }else{
+      } else {
         jornada_hora_final();
       }
     }
@@ -654,7 +669,8 @@ intervalos.addEventListener("keyup", function (event) {
         calcular_cupos(afternoon_start, afternoon_end);
       }
     } else if (check_hf.checked) {
-      jornada_hora_final();
+      let intv_delete = document.getElementById('intervalos').value;
+      intv_delete ? jornada_hora_final() : turno_mat.checked ? morninge.value = "" : turno_vesp.checked ? afternoone.value = "" : "";
     }
   }
 });
@@ -701,7 +717,9 @@ function KeyPressInt(e) {
         }
       }, 50);
     } else if (check_hf.checked) {
-      console.log('Ctrl+z intervalos hora final');
+      setTimeout(() => {
+        intervalos.value ? jornada_hora_final() : turno_mat.checked ? morninge.value = "" : turno_vesp.checked ? afternoone.value = "" : "";
+      }, 1);
     }
   }
   if (e.keyCode == 13) {
@@ -730,12 +748,12 @@ function KeyPressInt(e) {
           afternoon_end
         );
       }
-    }else if(check_hf.checked){console.log('Enter intervalos hora final');}
+    } else if (check_hf.checked) { jornada_hora_final(); }
   }
 }
 cupos.onkeydown = KeyPressCupo;
 
-// CÁLCULO DE HORA FINAL
+// CÁLCULO DE HORA FINAL MODAL
 
 // variables horas
 let hora_inicio_valor = document.getElementById("horainicio").value;
