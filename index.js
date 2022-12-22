@@ -333,15 +333,16 @@ cupos.addEventListener("paste", function () {
         }
       }
     } else if (check_hf.checked) {
-      console.log("Paste cupos hora final.");
       if (Number.isNaN(num)) {
         cupos.value = "";
+      }else{
+        jornada_hora_final();
       }
     }
   }, 5);
 });
 
-// Realizar Funciones al hacer DELETE
+//DELETE en cupos
 cupos.addEventListener("keyup", function (event) {
 
   if (event.key == "Backspace") {
@@ -378,7 +379,7 @@ cupos.addEventListener("keyup", function (event) {
         calcular_intervalos(morning_start, morning_end);
       }
     } else if (check_hf.checked) {
-      console.log('Delete cupos hora final');
+      jornada_hora_final();
     }
   }
 });
@@ -607,9 +608,10 @@ intervalos.addEventListener("paste", function () {
         }
       }
     } else if (check_hf.checked) {
-      console.log('Paste intervalos hora final');
       if (Number.isNaN(intv)) {
         intervalos.value = "";
+      }else{
+        jornada_hora_final();
       }
     }
   }, 5);
@@ -652,7 +654,7 @@ intervalos.addEventListener("keyup", function (event) {
         calcular_cupos(afternoon_start, afternoon_end);
       }
     } else if (check_hf.checked) {
-      console.log('Delete intervalos hora final');
+      jornada_hora_final();
     }
   }
 });
