@@ -58,12 +58,15 @@ function solo_numeros(e) {
 
 // Disabled & Enabled check hora final
 check_hf.addEventListener("click", () => {
-
+  cupos.value="";
+  intervalos.value="";
   if (check_hf.checked) {
       morninge.disabled = true;
       morninge.value = "";
       afternoone.disabled = true;
       afternoone.value = "";
+      turno_vesp.checked = false;
+      afternoons.disabled = true;
   } else if (!check_hf.checked) {
     turno_mat.checked ? (morninge.disabled = false, (morninge.value == "")?morninge.value = "12:00": ""): morninge.disabled = true,(morninge.value == "")?morninge.value ='12:00': morninge.value=="" ? morninge.value='12:00':'';
     turno_vesp.checked ? (afternoone.disabled = false, (afternoone.value == "")? afternoone.value = '18:00':'') : afternoone.disabled = true,(afternoone.value == "")?afternoone.value ='18:00': afternoone.value=="" ? afternoone.value='18:00':'';
