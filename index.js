@@ -30,9 +30,12 @@ let fulltime = document.getElementById("fulltime");
 // Check para realizar cálculo hora final
 let check_hf = document.getElementById("check_hf");
 
+// inputs turno mañana
+let cupos_morning = document.getElementById('cupos_morning');
+let intv_morning = document.getElementById('intv_morning');
 // Mandar hora al iniciar página
 (function () {
-  // Desacticvar Calculo doble
+  // Desactivar Calculo doble
   check_hf.checked = false;
 
   // Horas matutinas
@@ -52,6 +55,7 @@ let check_hf = document.getElementById("check_hf");
   //Input vacios
   cupos.value = "";
   intervalos.value = "";
+
 })();
 
 // Solo números en los input
@@ -69,8 +73,6 @@ check_hf.addEventListener("click", () => {
     morninge.value = "";
     afternoone.disabled = true;
     afternoone.value = "";
-    turno_vesp.checked = false;
-    afternoons.disabled = true;
   } else if (!check_hf.checked) {
     turno_mat.checked
       ? ((morninge.disabled = false),
@@ -79,8 +81,8 @@ check_hf.addEventListener("click", () => {
       morninge.value == ""
         ? (morninge.value = "12:00")
         : morninge.value == ""
-        ? (morninge.value = "12:00")
-        : "";
+          ? (morninge.value = "12:00")
+          : "";
     turno_vesp.checked
       ? ((afternoone.disabled = false),
         afternoone.value == "" ? (afternoone.value = "18:00") : "")
@@ -88,8 +90,8 @@ check_hf.addEventListener("click", () => {
       afternoone.value == ""
         ? (afternoone.value = "18:00")
         : afternoone.value == ""
-        ? (afternoone.value = "18:00")
-        : "";
+          ? (afternoone.value = "18:00")
+          : "";
   }
 });
 
@@ -104,10 +106,12 @@ function activacion_turnos(valor) {
         } else {
           mornings.disabled = false;
           morninge.disabled = false;
+          cupos_morning.disabled = false;
         }
       } else {
         mornings.disabled = true;
         morninge.disabled = true;
+        cupos_morning.disabled = true;
       }
       break;
     case 2:
@@ -251,10 +255,10 @@ function jornada_hora_final() {
       turno_mat.checked && !turno_vesp.checked
         ? calcular_hora_final(morninge)
         : !turno_mat.checked && turno_vesp.checked
-        ? calcular_hora_final(afternoone)
-        : turno_mat.checked && turno_vesp.checked
-        ? calcular_hf_fulltime()
-        : "";
+          ? calcular_hora_final(afternoone)
+          : turno_mat.checked && turno_vesp.checked
+            ? calcular_hf_fulltime()
+            : "";
     }
   }, 5);
 }
@@ -400,10 +404,10 @@ cupos.addEventListener("keyup", function (event) {
       cupo
         ? jornada_hora_final()
         : turno_mat.checked
-        ? (morninge.value = "")
-        : turno_vesp.checked
-        ? (afternoone.value = "")
-        : "";
+          ? (morninge.value = "")
+          : turno_vesp.checked
+            ? (afternoone.value = "")
+            : "";
     }
   }
 });
@@ -455,10 +459,10 @@ function KeyPressCupo(e) {
         cupos.value
           ? jornada_hora_final()
           : turno_mat.checked
-          ? (morninge.value = "")
-          : turno_vesp.checked
-          ? (afternoone.value = "")
-          : "";
+            ? (morninge.value = "")
+            : turno_vesp.checked
+              ? (afternoone.value = "")
+              : "";
       }, 1);
     }
   }
@@ -685,10 +689,10 @@ intervalos.addEventListener("keyup", function (event) {
       intv_delete
         ? jornada_hora_final()
         : turno_mat.checked
-        ? (morninge.value = "")
-        : turno_vesp.checked
-        ? (afternoone.value = "")
-        : "";
+          ? (morninge.value = "")
+          : turno_vesp.checked
+            ? (afternoone.value = "")
+            : "";
     }
   }
 });
@@ -739,10 +743,10 @@ function KeyPressInt(e) {
         intervalos.value
           ? jornada_hora_final()
           : turno_mat.checked
-          ? (morninge.value = "")
-          : turno_vesp.checked
-          ? (afternoone.value = "")
-          : "";
+            ? (morninge.value = "")
+            : turno_vesp.checked
+              ? (afternoone.value = "")
+              : "";
       }, 1);
     }
   }
