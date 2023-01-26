@@ -295,10 +295,6 @@ function calcular_hora_final(jornada) {
   }, 5);
 }
 
-function calcular_hf_fulltime() {
-  console.log("Debe calcular uno a la vez.");
-}
-
 // Calcular intervalos Jornada Vespertina
 cupos.addEventListener("keypress", function (valor) {
   if (!solo_numeros(valor)) {
