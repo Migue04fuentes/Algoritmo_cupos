@@ -46,9 +46,6 @@ let intv_morning = document.getElementById('intv_morning');
   afternoons.value = "14:00";
   afternoone.value = "18:00";
 
-  // Hora Inicial para el cálculo de la hora final
-  document.getElementById("horainicio").value = "06:00";
-
   // Activación de turnos
   turno_mat.checked = true;
   turno_vesp.checked = true;
@@ -69,6 +66,8 @@ function solo_numeros(e) {
 check_hf.addEventListener("click", () => {
   cupos.value = "";
   intervalos.value = "";
+  cupos_morning.value = "";
+  intv_morning.value = "";
   if (check_hf.checked) {
     morninge.disabled = true;
     morninge.value = "";
@@ -190,34 +189,6 @@ function calcular_intervalos(hora1, hora2, switche) {
   }
 }
 
-// Cáculo de intervalos en los dos turno activos
-function calcular_fulltime_intervalos(hr1, hr2, hr3, hr4) {
-  let horai = hr1.split(":");
-  let horaf = hr2.split(":");
-  let horati = hr3.split(":");
-  let horatf = hr4.split(":");
-
-  let h1 = new Date();
-  let h2 = new Date();
-  let h3 = new Date();
-  let h4 = new Date();
-  let ht = new Date();
-
-  h1.setHours(horai[0], horai[1]);
-  h2.setHours(horaf[0], horaf[1]);
-  h3.setHours(horati[0], horati[1]);
-  h4.setHours(horatf[0], horatf[1]);
-
-  ht.setHours(h2.getHours() - h1.getHours(), h2.getMinutes() - h1.getMinutes());
-  let minutes =
-    (h2.getHours() - h1.getHours() + (h4.getHours() - h3.getHours())) * 60 +
-    (h2.getMinutes() - h1.getMinutes() + (h4.getMinutes() - h3.getMinutes()));
-  let total_int = minutes / num;
-  total_int += "";
-  total_int.length > 4 ? (total_int = total_int.slice(0, 4)) : "";
-  intv = total_int + "";
-  intervalos.value = total_int;
-}
 
 // Función calculos intervalos por jornada
 function calcular_intervalos_jornada(switche) {
@@ -241,29 +212,31 @@ function calcular_intervalos_jornada(switche) {
 }
 
 // jornada calculo hora final
-function jornada_hora_final() {
-  setTimeout(() => {
-    let cuposhf = cupos.value;
-    let intervhf = intervalos.value;
-    if (cuposhf && intervhf) {
-      turno_mat.checked && !turno_vesp.checked
-        ? calcular_hora_final(morninge)
-        : !turno_mat.checked && turno_vesp.checked
-          ? calcular_hora_final(afternoone)
-          : turno_mat.checked && turno_vesp.checked
-            ? calcular_hf_fulltime()
-            : "";
-    }
-  }, 5);
+function jornada_hora_final(switche) {
+  if (switche === 1) {
+    setTimeout(() => {
+      let cuposhf = cupos_morning.value;
+      let intervhf = intv_morning.value;
+      if (cuposhf && intervhf) {
+        calcular_hora_final(cuposhf, intervhf, morninge)
+      }
+    }, 5);
+  } else if (switche === 2) {
+    setTimeout(() => {
+      let cuposhf = cupos.value;
+      let intervhf = intervalos.value;
+      if (cuposhf && intervhf) {
+        calcular_hora_final(cuposhf, intervhf, afternoone)
+      }
+    }, 5);
+  }
 }
 
 // Calculos de hora final
-function calcular_hora_final(jornada) {
+function calcular_hora_final(cuposhf, intervhf, jornada) {
   let horams = mornings.value;
   let horats = afternoons.value;
   setTimeout(() => {
-    let cuposhf = cupos.value;
-    let intervhf = intervalos.value;
     let horacal;
     let hora_final;
     if (jornada.id == "hora2") {
@@ -302,7 +275,7 @@ cupos.addEventListener("keypress", function (valor) {
   }
   if (valor.key >= 0 && valor.key <= 9) {
     switche = 2;
-    check_hf.checked ? jornada_hora_final() : calcular_intervalos_jornada(switche);
+    check_hf.checked ? jornada_hora_final(switche) : calcular_intervalos_jornada(switche);
   }
 });
 
@@ -313,7 +286,7 @@ cupos_morning.addEventListener('keypress', (event) => {
   }
   if (event.key >= 0 && event.key <= 9) {
     switche = 1;
-    check_hf.checked ? jornada_hora_final() : calcular_intervalos_jornada(switche);
+    check_hf.checked ? jornada_hora_final(switche) : calcular_intervalos_jornada(switche);
   }
 });
 
@@ -324,7 +297,7 @@ intervalos.addEventListener("keypress", function (e) {
   }
   if (e.key >= 0 && e.key <= 9) {
     switche = 2;
-    check_hf.checked ? jornada_hora_final() : calular_cupos_jornada(switche);
+    check_hf.checked ? jornada_hora_final(switche) : calular_cupos_jornada(switche);
   }
 });
 
@@ -335,13 +308,14 @@ intv_morning.addEventListener('keypress', (event) => {
   }
   if (event.key >= 0 && event.key <= 9) {
     switche = 1;
-    check_hf.checked ? jornada_hora_final() : calular_cupos_jornada(switche);
+    check_hf.checked ? jornada_hora_final(switche) : calular_cupos_jornada(switche);
   }
 })
 
 // Calcular al pegar Jornada Vespertina
 cupos.addEventListener("paste", function () {
   setTimeout(() => {
+    switche = 2;
     num = parseInt(document.getElementById("cupos").value);
     if (!check_hf.checked) {
       if (Number.isNaN(num)) {
@@ -352,7 +326,6 @@ cupos.addEventListener("paste", function () {
         intervalos.innertHTML = "";
         intervalos.value = "";
       } else {
-        switche = 2;
         num += "";
         afternoon_start = afternoons.value;
         afternoon_end = afternoone.value;
@@ -362,7 +335,7 @@ cupos.addEventListener("paste", function () {
       if (Number.isNaN(num)) {
         cupos.value = "";
       } else {
-        jornada_hora_final();
+        jornada_hora_final(switche);
       }
     }
   }, 5);
@@ -371,7 +344,8 @@ cupos.addEventListener("paste", function () {
 // Calcular al pegar Jornada Matutina
 cupos_morning.addEventListener("paste", function () {
   setTimeout(() => {
-    num = parseInt(document.getElementById("cupos").value);
+    switche = 1;
+    num = parseInt(document.getElementById("cupos_morning").value);
     if (!check_hf.checked) {
       if (Number.isNaN(num)) {
         intv = "";
@@ -379,7 +353,6 @@ cupos_morning.addEventListener("paste", function () {
         cupos_morning.value = "";
         intv_morning.value = "";
       } else {
-        switche = 1;
         num += "";
         morning_start = mornings.value;
         morning_end = morninge.value;
@@ -389,7 +362,7 @@ cupos_morning.addEventListener("paste", function () {
       if (Number.isNaN(num)) {
         cupos_morning.value = "";
       } else {
-        jornada_hora_final();
+        jornada_hora_final(switche);
       }
     }
   }, 5);
@@ -397,6 +370,7 @@ cupos_morning.addEventListener("paste", function () {
 
 //Calcular al presionar delete Jornada Vespertina
 cupos.addEventListener("keyup", function (event) {
+  switche = 2;
   if (event.key == "Backspace") {
     if (!check_hf.checked) {
       num = num.substring(0, num.length - 1);
@@ -409,26 +383,20 @@ cupos.addEventListener("keyup", function (event) {
         intv = "";
       }
       if (num != "") {
-        switche = 2;
         afternoon_start = afternoons.value;
         afternoon_end = afternoone.value;
         calcular_intervalos(afternoon_start, afternoon_end, switche);
       }
     } else if (check_hf.checked) {
       let cupo = document.getElementById("cupos").value;
-      cupo
-        ? jornada_hora_final()
-        : turno_mat.checked
-          ? (morninge.value = "")
-          : turno_vesp.checked
-            ? (afternoone.value = "")
-            : "";
+      cupo ? jornada_hora_final(switche) : afternoone.value = "";
     }
   }
 });
 
 //Calcular al presionar delete Jornada Matutina
 cupos_morning.addEventListener("keyup", function (event) {
+  switche = 1;
   if (event.key == "Backspace") {
     if (!check_hf.checked) {
       num = num.substring(0, num.length - 1);
@@ -440,7 +408,6 @@ cupos_morning.addEventListener("keyup", function (event) {
         intv = "";
       }
       if (num != "") {
-        switche = 1;
         morning_start = mornings.value;
         morning_end = morninge.value;
         calcular_intervalos(morning_start, morning_end, switche);
@@ -448,19 +415,15 @@ cupos_morning.addEventListener("keyup", function (event) {
     } else if (check_hf.checked) {
       let cupo = document.getElementById("cupos_morning").value;
       cupo
-        ? jornada_hora_final()
-        : turno_mat.checked
-          ? (morninge.value = "")
-          : turno_vesp.checked
-            ? (afternoone.value = "")
-            : "";
+        ? jornada_hora_final(switche)
+        : morninge.value = "";
     }
   }
 });
 
 //Calcular al presionar control+z Jornada Vespertina
 function KeyPressCupo(e) {
-  // var evtobj = window.event ? event : e
+  switche = 2;
   if (e.keyCode == 90 && e.ctrlKey) {
     if (!check_hf.checked) {
       setTimeout(() => {
@@ -473,7 +436,6 @@ function KeyPressCupo(e) {
           intervalos.innertHTML = "";
           intervalos.value = "";
         } else {
-          switche = 2;
           num += "";
           afternoon_start = afternoons.value;
           afternoon_end = afternoone.value;
@@ -483,12 +445,7 @@ function KeyPressCupo(e) {
     } else if (check_hf.checked) {
       setTimeout(() => {
         cupos.value
-          ? jornada_hora_final()
-          : turno_mat.checked
-            ? (morninge.value = "")
-            : turno_vesp.checked
-              ? (afternoone.value = "")
-              : "";
+          ? jornada_hora_final(switche) : afternoone.value = "";
       }, 1);
     }
   }
@@ -497,14 +454,13 @@ function KeyPressCupo(e) {
     if (!check_hf.checked) {
       cupos_valor = document.getElementById("cupos").value;
       if (cupos_valor != "") {
-        switche = 2;
         num = document.getElementById("cupos").value;
         afternoon_start = afternoons.value;
         afternoon_end = afternoone.value;
         calcular_intervalos(afternoon_start, afternoon_end, switche);
       }
     } else if (check_hf.checked) {
-      jornada_hora_final();
+      jornada_hora_final(switche);
     }
   }
 }
@@ -513,6 +469,7 @@ cupos.onkeydown = KeyPressCupo;
 // Calcular al Presinar en cupos Jornada Matutina
 function KeyPressCupojm(e) {
   //Control+z
+  switche = 1;
   if (e.keyCode == 90 && e.ctrlKey) {
     if (!check_hf.checked) {
       setTimeout(() => {
@@ -523,7 +480,6 @@ function KeyPressCupojm(e) {
           cupos_morning.value = "";
           intv_morning.value = "";
         } else {
-          switche = 1;
           num += "";
           morning_start = mornings.value;
           morning_end = morninge.value;
@@ -533,12 +489,8 @@ function KeyPressCupojm(e) {
     } else if (check_hf.checked) {
       setTimeout(() => {
         cupos_morning.value
-          ? jornada_hora_final()
-          : turno_mat.checked
-            ? (morninge.value = "")
-            : turno_vesp.checked
-              ? (afternoone.value = "")
-              : "";
+          ? jornada_hora_final(switche)
+          : morninge.value = "";
       }, 1);
     }
   }
@@ -547,14 +499,13 @@ function KeyPressCupojm(e) {
     if (!check_hf.checked) {
       cupos_valor = document.getElementById("cupos_morning").value;
       if (cupos_valor != "") {
-        switche = 1;
         num = document.getElementById("cupos_morning").value;
         morning_start = mornings.value;
         morning_end = morninge.value;
         calcular_intervalos(morning_start, morning_end, switche);
       }
     } else if (check_hf.checked) {
-      jornada_hora_final();
+      jornada_hora_final(switche);
     }
   }
 }
@@ -616,6 +567,7 @@ function calular_cupos_jornada(switche) {
 
 //Calcular cupos al pegar Jornada Matutina
 intv_morning.addEventListener("paste", function () {
+  switche = 1;
   setTimeout(() => {
     intv = parseInt(document.getElementById("intv_morning").value);
     if (!check_hf.checked) {
@@ -625,7 +577,6 @@ intv_morning.addEventListener("paste", function () {
         cupos_morning.value = "";
         intv_morning.value = "";
       } else {
-        switche = 1;
         intv += "";
         morning_start = mornings.value;
         morning_end = morninge.value;
@@ -635,7 +586,7 @@ intv_morning.addEventListener("paste", function () {
       if (Number.isNaN(intv)) {
         intervalos.value = "";
       } else {
-        jornada_hora_final();
+        jornada_hora_final(switche);
       }
     }
   }, 5);
@@ -643,6 +594,7 @@ intv_morning.addEventListener("paste", function () {
 
 //Calcular cupos al pegar Jornada Vespertina
 intervalos.addEventListener("paste", function () {
+  switche = 2;
   setTimeout(() => {
     intv = parseInt(document.getElementById("intervalos").value);
     if (!check_hf.checked) {
@@ -653,7 +605,6 @@ intervalos.addEventListener("paste", function () {
         intervalos.innertHTML = "";
         intervalos.value = "";
       } else {
-        switche = 2;
         intv += "";
         afternoon_start = afternoons.value;
         afternoon_end = afternoone.value;
@@ -663,7 +614,7 @@ intervalos.addEventListener("paste", function () {
       if (Number.isNaN(intv)) {
         intervalos.value = "";
       } else {
-        jornada_hora_final();
+        jornada_hora_final(switche);
       }
     }
   }, 5);
@@ -671,6 +622,7 @@ intervalos.addEventListener("paste", function () {
 
 //Presionar Delete Jornada Matutina
 intv_morning.addEventListener("keyup", function (event) {
+  switche = 1;
   if (event.key == "Backspace") {
     if (!check_hf.checked) {
       intv = intv.substring(0, intv.length - 1);
@@ -682,26 +634,22 @@ intv_morning.addEventListener("keyup", function (event) {
         num = "";
       }
       if (intv != "") {
-        switche = 1;
         morning_start = mornings.value;
         morning_end = morninge.value;
         calcular_cupos(morning_start, morning_end, switche);
       }
     } else if (check_hf.checked) {
-      let intv_delete = document.getElementById("intervalos").value;
+      let intv_delete = document.getElementById("intv_morning").value;
       intv_delete
-        ? jornada_hora_final()
-        : turno_mat.checked
-          ? (morninge.value = "")
-          : turno_vesp.checked
-            ? (afternoone.value = "")
-            : "";
+        ? jornada_hora_final(switche)
+        : morninge.value = "";
     }
   }
 });
 
 //Presinar Delete Jornada Vespertina
 intervalos.addEventListener("keyup", function (event) {
+  switche = 2;
   if (event.key == "Backspace") {
     if (!check_hf.checked) {
       intv = intv.substring(0, intv.length - 1);
@@ -714,7 +662,6 @@ intervalos.addEventListener("keyup", function (event) {
         num = "";
       }
       if (intv != "") {
-        switche = 2;
         afternoon_start = afternoons.value;
         afternoon_end = afternoone.value;
         calcular_cupos(afternoon_start, afternoon_end, switche);
@@ -722,18 +669,15 @@ intervalos.addEventListener("keyup", function (event) {
     } else if (check_hf.checked) {
       let intv_delete = document.getElementById("intervalos").value;
       intv_delete
-        ? jornada_hora_final()
-        : turno_mat.checked
-          ? (morninge.value = "")
-          : turno_vesp.checked
-            ? (afternoone.value = "")
-            : "";
+        ? jornada_hora_final(switche)
+        : afternoone.value = "";
     }
   }
 });
 
 //Presionar control+z Jornada Matutina
 function KeyPressIntjm(e) {
+  switche = 1;
   if (e.keyCode == 90 && e.ctrlKey) {
     if (!check_hf.checked) {
       setTimeout(() => {
@@ -744,37 +688,31 @@ function KeyPressIntjm(e) {
           cupos_morning.value = "";
           intv_morning.value = "";
         } else {
-          switche = 1;
-            intv += "";
-            morning_start = mornings.value;
-            morning_end = morninge.value;
-            calcular_cupos(morning_start, morning_end, switche);
+          intv += "";
+          morning_start = mornings.value;
+          morning_end = morninge.value;
+          calcular_cupos(morning_start, morning_end, switche);
         }
       }, 50);
     } else if (check_hf.checked) {
       setTimeout(() => {
         intervalos.value
-          ? jornada_hora_final()
-          : turno_mat.checked
-            ? (morninge.value = "")
-            : turno_vesp.checked
-              ? (afternoone.value = "")
-              : "";
+          ? jornada_hora_final(switche)
+          : morninge.value = "";
       }, 1);
     }
   }
   if (e.keyCode == 13) {
     if (!check_hf.checked) {
       cupos_valor = document.getElementById("cupos_morning").value;
-     if (cupos_valor != "") {
-      switche = 1;
+      if (cupos_valor != "") {
         num = document.getElementById("cupos_morning").value;
         morning_start = mornings.value;
         morning_end = morninge.value;
         calcular_cupos(morning_start, morning_end, switche);
       }
     } else if (check_hf.checked) {
-      jornada_hora_final();
+      jornada_hora_final(switche);
     }
   }
 }
@@ -782,6 +720,7 @@ intv_morning.onkeydown = KeyPressIntjm;
 
 //Presionar control+z Jornada Vespertina
 function KeyPressInt(e) {
+  switche = 2;
   if (e.keyCode == 90 && e.ctrlKey) {
     if (!check_hf.checked) {
       setTimeout(() => {
@@ -794,22 +733,17 @@ function KeyPressInt(e) {
           intervalos.innertHTML = "";
           intervalos.value = "";
         } else {
-            switche =2;
-            intv += "";
-            afternoon_start = afternoons.value;
-            afternoon_end = afternoone.value;
-            calcular_cupos(afternoon_start, afternoon_end, switche);
+          intv += "";
+          afternoon_start = afternoons.value;
+          afternoon_end = afternoone.value;
+          calcular_cupos(afternoon_start, afternoon_end, switche);
         }
       }, 50);
     } else if (check_hf.checked) {
       setTimeout(() => {
         intervalos.value
-          ? jornada_hora_final()
-          : turno_mat.checked
-            ? (morninge.value = "")
-            : turno_vesp.checked
-              ? (afternoone.value = "")
-              : "";
+          ? jornada_hora_final(switche)
+          : afternoone.value = "";
       }, 1);
     }
   }
@@ -824,231 +758,8 @@ function KeyPressInt(e) {
         calcular_cupos(afternoon_start, afternoon_end, switche);
       }
     } else if (check_hf.checked) {
-      jornada_hora_final();
+      jornada_hora_final(switche);
     }
   }
 }
 intervalos.onkeydown = KeyPressInt;
-
-// CÁLCULO DE HORA FINAL MODAL
-// variables horas
-let hora_inicio_valor;
-let hora_inicio = document.getElementById("horainicio");
-let hora_final_valor = document.getElementById("horafinal").value;
-let hora_final = document.getElementById("horafinal");
-//  variables input
-let input_cupos_valor;
-let input_cupos = document.getElementById("cuposhf");
-let input_intervalos_valor;
-let input_intervalos = document.getElementById("intervaloshf");
-
-// botó aceptar
-let btn_hora_final = document.getElementById("btn_hora_final");
-
-// CÁLCULOS POR CAMBIOS DE HORA
-// hora inicio turno mañana
-function cal_hora_final(horai, cupos, interv) {
-  let horahf = horai.split(":");
-  let cuposhf = cupos;
-  let intervhf = interv;
-
-  let hi = new Date();
-  let hf = new Date();
-
-  hi.setHours(horahf[0], horahf[1]);
-
-  let minutes = cuposhf * intervhf;
-
-  hf.setHours(hi.getHours(), hi.getMinutes());
-  hf.setMinutes(hf.getMinutes() + minutes);
-
-  let hour = `${hf.getHours()}`;
-  let minute = `${hf.getMinutes()}`;
-  hora_final.value =
-    (hour ? (hour <= 9 ? `0${hour}:` : `${hour}:`) : "") +
-    (minute ? (minute <= 9 ? `0${minute}` : minute) : "");
-}
-
-// Calcular al hacer cambios en hora inicio
-hora_inicio.addEventListener("change", () => {
-  input_cupos_valor = input_cupos.value;
-  input_intervalos_valor = input_intervalos.value;
-  hora_inicio_valor = hora_inicio.value;
-  if (input_cupos_valor && input_intervalos_valor) {
-    cal_hora_final(
-      hora_inicio_valor,
-      input_cupos_valor,
-      input_intervalos_valor
-    );
-  }
-});
-
-// Calcular la digitar en el input cupos
-input_cupos.addEventListener("keypress", function (e) {
-  if (!solo_numeros(e)) {
-    e.preventDefault();
-  }
-  if (e.key >= 0 && e.key <= 9) {
-    setTimeout(() => {
-      input_cupos_valor = input_cupos.value;
-      input_intervalos_valor = input_intervalos.value;
-      hora_inicio_valor = hora_inicio.value;
-      if (input_cupos_valor && input_intervalos_valor) {
-        cal_hora_final(
-          hora_inicio_valor,
-          input_cupos_valor,
-          input_intervalos_valor
-        );
-      }
-    }, 10);
-  }
-});
-
-// Calcular hora final al hacer delete en input cupos
-input_cupos.addEventListener("keyup", (e) => {
-  if (e.key == "Backspace") {
-    input_cupos_valor = document.getElementById("cuposhf").value;
-    if (input_cupos_valor != "") {
-      input_intervalos_valor = input_intervalos.value;
-      hora_inicio_valor = document.getElementById("horainicio").value;
-      if (input_cupos_valor && input_intervalos_valor) {
-        cal_hora_final(
-          hora_inicio_valor,
-          input_cupos_valor,
-          input_intervalos_valor
-        );
-      }
-    } else {
-      hora_final.value = "";
-    }
-  }
-});
-
-// Calcular al pegar en el input cupos
-input_cupos.addEventListener("paste", function () {
-  setTimeout(() => {
-    input_cupos_valor = parseInt(document.getElementById("cuposhf").value);
-    if (Number.isNaN(input_cupos_valor)) {
-      input_cupos.value = "";
-      input_intervalos.value = "";
-    } else {
-      input_intervalos_valor = input_intervalos.value;
-      hora_inicio_valor = document.getElementById("horainicio").value;
-      if (input_cupos_valor && input_intervalos_valor) {
-        cal_hora_final(
-          hora_inicio_valor,
-          input_cupos_valor,
-          input_intervalos_valor
-        );
-      }
-    }
-  }, 10);
-});
-
-// Calcular al digitar en el input intervalos
-input_intervalos.addEventListener("keypress", (e) => {
-  if (!solo_numeros(e)) {
-    e.preventDefault();
-  }
-  if (e.key >= 0 && e.key <= 9) {
-    setTimeout(() => {
-      input_cupos_valor = document.getElementById("cuposhf").value;
-      input_intervalos_valor = input_intervalos.value;
-      hora_inicio_valor = document.getElementById("horainicio").value;
-      if (input_cupos_valor && input_intervalos_valor) {
-        cal_hora_final(
-          hora_inicio_valor,
-          input_cupos_valor,
-          input_intervalos_valor
-        );
-      }
-    }, 10);
-  }
-});
-
-// Calcular al pegar en input intervalos
-input_intervalos.addEventListener("paste", function () {
-  setTimeout(() => {
-    input_cupos_valor = parseInt(document.getElementById("cuposhf").value);
-    if (Number.isNaN(input_cupos_valor)) {
-      input_cupos.value = "";
-      input_intervalos.value = "";
-    } else {
-      input_intervalos_valor = input_intervalos.value;
-      hora_inicio_valor = document.getElementById("horainicio").value;
-      if (input_cupos_valor && input_intervalos_valor) {
-        cal_hora_final(
-          hora_inicio_valor,
-          input_cupos_valor,
-          input_intervalos_valor
-        );
-      }
-    }
-  }, 10);
-});
-
-// Calcular hora final al hacer delete en input Intervalos
-input_intervalos.addEventListener("keyup", (e) => {
-  if (e.key == "Backspace") {
-    input_intervalos_valor = input_intervalos.value;
-    if (input_intervalos_valor != "") {
-      input_cupos_valor = document.getElementById("cuposhf").value;
-      hora_inicio_valor = document.getElementById("horainicio").value;
-      if (input_cupos_valor && input_intervalos_valor) {
-        cal_hora_final(
-          hora_inicio_valor,
-          input_cupos_valor,
-          input_intervalos_valor
-        );
-      }
-    } else {
-      hora_final.value = "";
-    }
-  }
-});
-
-// limpiiar al cerrar modal
-let clear_modal = document.getElementById("close");
-clear_modal.addEventListener("click", () => {
-  input_cupos.value = "";
-  input_intervalos.value = "";
-  hora_inicio.value = "06:00";
-  hora_final.value = "--:--";
-});
-
-// Redireccionar si la jornada es matutina o vespertina
-function validar_jornada(hora) {
-  let horajr = hora.split(":");
-  if (horajr[0] >= "00" && horajr[0] <= "11") {
-    return 1;
-  }
-  if (horajr[0] >= "12" && horajr[0] <= "23") {
-    return 2;
-  }
-}
-
-// Botón aceptar del modal calcular hora final
-btn_hora_final.addEventListener("click", () => {
-  hora_inicio_valor = document.getElementById("horainicio").value;
-  hora_final_valor = document.getElementById("horafinal").value;
-  input_cupos_valor = document.getElementById("cuposhf").value;
-  input_intervalos_valor = input_intervalos.value;
-
-  if (
-    hora_inicio_valor &&
-    hora_final_valor &&
-    input_cupos_valor &&
-    input_intervalos_valor
-  ) {
-    console.log(validar_jornada(hora_inicio_valor));
-  }
-});
-
-mornings.addEventListener("change", () => {
-  console.log("Se ha detectado un cambio him");
-});
-
-// Hora final turno mañana
-morninge.addEventListener("change", () => {
-  console.log("Se ha detectado un cambio hfm");
-});
